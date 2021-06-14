@@ -1,28 +1,28 @@
-# `{{package-name}}`
+# `{{packageName}}`
 
 ## overview
 
 > TODO: description
 
 ## install
-`npm i {{package-name}}`
+`npm i {{packageName}}`
 
 ## usage
 
 ```
-const {{package-name}} = require('{{package-name}}');
+const {{packageName}} = require('{{packageName}}');
 // or
-// import {{package-name}} from '{{package-name}}';
+// import {{packageName}} from '{{packageName}}';
 
 // TODO: DEMONSTRATE API
 ```
 
 ## api
 
-{{package-name}}.fn(param, first: string, second: boolean = true) => void
+{{packageName}}.fn(param, first: string, second: boolean = true) => void
 description
 
-{{package-name}}.fn(param, [options: {a: string, b?: number}])
+{{packageName}}.fn(param, [options: {a: string, b?: number}])
 description
 
 ## principle

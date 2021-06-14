@@ -9,34 +9,39 @@ const chalk = require('chalk')
 const {log} = console
 
 program
-	.command('init <filename>')
+	// .command('init <filename>')
+	.command('init <fileType>')
 	.option('-d, --debug', 'output extra debugging')
 	.option('--debug', 'output extra debugging')
-	.action((filename, options) => {
+	.option('--file [file]', 'name and path of file')
+	.option('--packageName [packageName]', 'please input packageName')
+	.action((fileType, options) => {
 		// log('filename', filename)
 		// log('options', options)
-		let pDir = path.dirname(filename) 
+		let pDir = path.dirname(options.file) 
+		// log(chalk.red(pDir))
+		// log('pDir', pDir)
 		mkdirp(pDir).then((str) => {
-			let f = filename.split('/')
-			f = f[f.length - 1]
-			let result = ''
-			switch (f) {
+			// let f = options.file.split('/')
+			// f = f[f.length - 1]
+			// let result = ''
+			switch (fileType) {
 				// assets
-				case '.gitignore':
-					init['.gitignore'](filename)
-					break;
-				case 'commitlint.config.js':
-					init['commitlint.config.js'](filename)
-					break;
+				// case '.gitignore':
+				// 	init['.gitignore'](filename)
+				// 	break;
+				// case 'commitlint.config.js':
+				// 	init['commitlint.config.js'](filename)
+				// 	break;
 				case 'README.md':
 				case 'readme.md':
-					init['readme.md'](filename)
+					init['readme.md'](options)
 					break;
 				default:
 					log(chalk.yellow('暂时不支持初始化该文件'))
 					break;
 			}
-			return result
+			// return result
 		})
 		.catch(error => log('error in init:\n', chalk.red(error.message)))
 	})
@@ -48,7 +53,8 @@ let pUtil = {
 }
 let defaultOptions = {
 	readme: {
-		packageName: 'package-name'
+		packageName: 'packageName',
+		filename: 'readme.md'
 	}
 }
 let init = {
@@ -77,10 +83,12 @@ let init = {
 		})
 
 	},
-	'readme.md': (filename, option = defaultOptions.readme) => {
+	'readme.md': (userOption, defaultOption = defaultOptions.readme) => {
 		let {pReadFile, pWriteFile} = pUtil
+		let filename = userOption.file || defaultOption.filename
+		let packageName = userOption.packageName || defaultOption.packageName
 		pReadFile(path.resolve(__dirname, '../assets/readme.md'), 'utf-8').then((textContent) => {
-			return pWriteFile(filename, textContent.replace(/\{\{package-name}}/g, option.packageName), 'utf-8')
+			return pWriteFile(filename, textContent.replace(/\{\{packageName}}/g, packageName), 'utf-8')
 		}).then(() => {
 			log(chalk.blue(`创建${filename} - 完成`))
 		}).catch(() => {
