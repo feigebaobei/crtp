@@ -7,6 +7,8 @@ const path = require('path')
 const util = require('util')
 const chalk = require('chalk')
 const {log} = console
+// const utils = require('./utils/index.js')
+const assetsConfig = require('./config.js')
 
 program
 	// .command('init <filename>')
@@ -37,6 +39,9 @@ program
 				case 'readme.md':
 					init['readme.md'](options)
 					break;
+				case 'demo.md':
+					init['demo.md'](options)
+					break;
 				default:
 					log(chalk.yellow('暂时不支持初始化该文件'))
 					break;
@@ -55,8 +60,15 @@ let defaultOptions = {
 	readme: {
 		packageName: 'packageName',
 		filename: 'readme.md'
+	},
+	demo: {
+		filename: 'demo.md'
 	}
 }
+let resFn = () => {
+
+}
+
 let init = {
 	'.gitignore': (filename) => {
 		let pathGit = path.resolve(__dirname, '../assets/.gitignore')
@@ -89,6 +101,17 @@ let init = {
 		let packageName = userOption.packageName || defaultOption.packageName
 		pReadFile(path.resolve(__dirname, '../assets/readme.md'), 'utf-8').then((textContent) => {
 			return pWriteFile(filename, textContent.replace(/\{\{packageName}}/g, packageName), 'utf-8')
+		}).then(() => {
+			log(chalk.blue(`创建${filename} - 完成`))
+		}).catch(() => {
+			log(chalk.red(`创建${filename} - 失败`))
+		})
+	},
+	'demo.md': (userOption, defaultOption = defaultOptions.demo) => {
+		let {pReadFile, pWriteFile} = pUtil
+		let filename = userOption.file || defaultOption.filename
+		pReadFile(path.resolve(__dirname, assetsConfig.ASSETSDEMOMD), 'utf-8').then((textContent) => {
+			return pWriteFile(filename, textContent, 'utf-8')
 		}).then(() => {
 			log(chalk.blue(`创建${filename} - 完成`))
 		}).catch(() => {

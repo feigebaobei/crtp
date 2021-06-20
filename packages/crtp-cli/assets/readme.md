@@ -17,6 +17,9 @@ const {{packageName}} = require('{{packageName}}');
 // TODO: DEMONSTRATE API
 ```
 
+## configuration
+默认配置文件：`path/to/file.json`。
+
 ## api
 
 {{packageName}}.fn(param, first: string, second: boolean = true) => void
