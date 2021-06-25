@@ -13,7 +13,9 @@ const assetsConfig = require('./config.js')
 
 let pUtil = {
 	pReadFile: util.promisify(fs.readFile),
-	pWriteFile: util.promisify(fs.writeFile)
+	pWriteFile: util.promisify(fs.writeFile),
+	pReaddir: util.promisify(fs.readdir),
+	pRm: util.promisify(fs.rm)
 }
 let defaultOptions = {
 	readme: {
@@ -128,6 +130,36 @@ let addFile = (filename, userOption) => {
 		log(chalk.red(`添加基本文件${filename} - 失败`))
 	})
 }
+let listFiles = () => {
+	let {pReaddir} = pUtil
+	pReaddir(path.resolve(__dirname, '../assets')).then(files => {
+		files.forEach(item => {
+			log(chalk.blue(item))
+		})
+	}).catch(() => {
+		log(chalk.red(`查询基本文件 - 失败`))
+	})
+}
+let isexist = (file) => {
+	let {pReaddir} = pUtil
+	pReaddir(path.resolve(__dirname, '../assets')).then(files => {
+		if (files.includes(file)) {
+			log(chalk.blue('存在该基本文件'))
+		} else {
+			log(chalk.yellow('不存在该基本文件'))
+		}
+	}).catch(() => {
+		log(chalk.red(`查询基本文件 - 失败`))
+	})
+}
+let delFile = (filename) => {
+	let {pRm} = pUtil
+	pRm(path.resolve(__dirname, '../assets', filename)).then(() => {
+		log(chalk.blue(`删除基本文件${filename} - 成功`))
+	}).catch(() => {
+		log(chalk.red(`删除基本文件${filename} - 失败`))
+	})
+}
 
 program
 	// .command('init <filename>')
@@ -179,11 +211,40 @@ program
 		.catch(error => log('error in init:\n', chalk.red(error.message)))
 	})
 
-// crtp add abc.md --file ./path/to/file.md
+// crtp init add <filename> --file <path/to/file.ext>
 program
 	.command('add <filename>')
 	.option('--file <file>', 'path to file')
 	.action((filename, options) => {
 		addFile(filename, options)
 	})
+
+// crtp list
+program
+	.command('list')
+	.action(() => {
+		listFiles()
+	})
+// crtp ls
+// 与crtp list功能相同。是list的别名。
+program
+	.command('ls')
+	.action(() => {
+		listFiles()
+	})
+
+// crtp exist <filename>
+program
+	.command('exist <filename>')
+	.action((filename) => {
+		isexist(filename)
+	})
+
+// crtp del <filename>
+program
+	.command('del <filename>')
+	.action((filename) => {
+		delFile(filename)
+	})
+
 program.parse(process.argv)
