@@ -6,60 +6,10 @@ const mkdirp = require('mkdirp')
 const path = require('path')
 const util = require('util')
 const chalk = require('chalk')
+const execa = require('execa')
 const {log} = console
-// const utils = require('./utils/index.js')
+// const utils = require('../utils/index.js')
 const assetsConfig = require('./config.js')
-
-program
-	// .command('init <filename>')
-	.command('init <fileType>')
-	.option('-d, --debug', 'output extra debugging')
-	.option('--debug', 'output extra debugging')
-	.option('--file [file]', 'name and path of file')
-	.option('--packageName [packageName]', 'please input packageName')
-	.action((fileType, options) => {
-		// log('filename', filename)
-		// log('options', options)
-		let pDir = path.dirname(options.file) 
-		// log(chalk.red(pDir))
-		// log('pDir', pDir)
-		mkdirp(pDir).then((str) => {
-			// let f = options.file.split('/')
-			// f = f[f.length - 1]
-			// let result = ''
-			switch (fileType) {
-				// assets
-				// case '.gitignore':
-				// 	init['.gitignore'](filename)
-				// 	break;
-				// case 'commitlint.config.js':
-				// 	init['commitlint.config.js'](filename)
-				// 	break;
-				case 'README.md':
-				case 'readme.md':
-					init['readme.md'](options)
-					break;
-				case 'demo.md':
-					init['demo.md'](options)
-					break;
-				case 'baseCars.vue':
-					init['baseCars.vue'](options)
-					break;
-				case 'baseDemoPage.vue':
-					init['baseDemoPage.vue'](options)
-					break;
-				case 'compDoc.md':
-					init['compDoc.md'](options)
-					break;
-				default:
-					log(chalk.yellow('暂时不支持初始化该文件'))
-					break;
-			}
-			// return result
-		})
-		.catch(error => log('error in init:\n', chalk.red(error.message)))
-	})
-program.parse(process.argv)
 
 let pUtil = {
 	pReadFile: util.promisify(fs.readFile),
@@ -167,3 +117,73 @@ let init = {
 		})
 	}
 }
+// crtp add abc.md --file ./path/to/file.md
+let addFile = (filename, userOption) => {
+	let {pReadFile, pWriteFile} = pUtil
+	pReadFile(path.resolve(process.cwd(), userOption.file), 'utf-8').then((textContent) => {
+		return pWriteFile(path.resolve(__dirname, '../assets', filename), textContent, 'utf-8')
+	}).then(() => {
+		log(chalk.blue(`添加基本文件${filename} - 完成`))
+	}).catch(() => {
+		log(chalk.red(`添加基本文件${filename} - 失败`))
+	})
+}
+
+program
+	// .command('init <filename>')
+	.command('init <fileType>')
+	.option('-d, --debug', 'output extra debugging')
+	.option('--debug', 'output extra debugging')
+	.option('--file [file]', 'name and path of file')
+	.option('--packageName [packageName]', 'please input packageName')
+	.action((fileType, options) => {
+		// log('filename', filename)
+		// log('options', options)
+		let pDir = path.dirname(options.file) 
+		// log(chalk.red(pDir))
+		// log('pDir', pDir)
+		mkdirp(pDir).then((str) => {
+			// let f = options.file.split('/')
+			// f = f[f.length - 1]
+			// let result = ''
+			switch (fileType) {
+				// assets
+				// case '.gitignore':
+				// 	init['.gitignore'](filename)
+				// 	break;
+				// case 'commitlint.config.js':
+				// 	init['commitlint.config.js'](filename)
+				// 	break;
+				case 'README.md':
+				case 'readme.md':
+					init['readme.md'](options)
+					break;
+				case 'demo.md':
+					init['demo.md'](options)
+					break;
+				case 'baseCars.vue':
+					init['baseCars.vue'](options)
+					break;
+				case 'baseDemoPage.vue':
+					init['baseDemoPage.vue'](options)
+					break;
+				case 'compDoc.md':
+					init['compDoc.md'](options)
+					break;
+				default:
+					log(chalk.yellow('暂时不支持初始化该文件'))
+					break;
+			}
+			// return result
+		})
+		.catch(error => log('error in init:\n', chalk.red(error.message)))
+	})
+
+// crtp add abc.md --file ./path/to/file.md
+program
+	.command('add <filename>')
+	.option('--file <file>', 'path to file')
+	.action((filename, options) => {
+		addFile(filename, options)
+	})
+program.parse(process.argv)
