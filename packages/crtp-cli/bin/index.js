@@ -42,6 +42,15 @@ program
 				case 'demo.md':
 					init['demo.md'](options)
 					break;
+				case 'baseCars.vue':
+					init['baseCars.vue'](options)
+					break;
+				case 'baseDemoPage.vue':
+					init['baseDemoPage.vue'](options)
+					break;
+				case 'compDoc.md':
+					init['compDoc.md'](options)
+					break;
 				default:
 					log(chalk.yellow('暂时不支持初始化该文件'))
 					break;
@@ -63,6 +72,12 @@ let defaultOptions = {
 	},
 	demo: {
 		filename: 'demo.md'
+	},
+	baseCars: {
+		filename: 'baseCars.vue'
+	},
+	baseDemoPage: {
+		filename: 'baseDemoPage.vue'
 	}
 }
 let resFn = () => {
@@ -111,6 +126,39 @@ let init = {
 		let {pReadFile, pWriteFile} = pUtil
 		let filename = userOption.file || defaultOption.filename
 		pReadFile(path.resolve(__dirname, assetsConfig.ASSETSDEMOMD), 'utf-8').then((textContent) => {
+			return pWriteFile(filename, textContent, 'utf-8')
+		}).then(() => {
+			log(chalk.blue(`创建${filename} - 完成`))
+		}).catch(() => {
+			log(chalk.red(`创建${filename} - 失败`))
+		})
+	},
+	'baseCars.vue': (userOption, defaultOption = defaultOptions.baseCars) => {
+		let {pReadFile, pWriteFile} = pUtil
+		let filename = userOption.file || defaultOption.filename
+		pReadFile(path.resolve(__dirname, assetsConfig.ASSETSBASECARS), 'utf-8').then((textContent) => {
+			return pWriteFile(filename, textContent, 'utf-8')
+		}).then(() => {
+			log(chalk.blue(`创建${filename} - 完成`))
+		}).catch(() => {
+			log(chalk.red(`创建${filename} - 失败`))
+		})
+	},
+	'baseDemoPage.vue': (userOption, defaultOption = defaultOptions.demo) => {
+		let {pReadFile, pWriteFile} = pUtil
+		let filename = userOption.file || defaultOption.filename
+		pReadFile(path.resolve(__dirname, assetsConfig.ASSETSBASEDEMOPAGE), 'utf-8').then((textContent) => {
+			return pWriteFile(filename, textContent, 'utf-8')
+		}).then(() => {
+			log(chalk.blue(`创建${filename} - 完成`))
+		}).catch(() => {
+			log(chalk.red(`创建${filename} - 失败`))
+		})
+	},
+	'compDoc.md': (userOption, defaultOption = defaultOptions.demo) => {
+		let {pReadFile, pWriteFile} = pUtil
+		let filename = userOption.file || defaultOption.filename
+		pReadFile(path.resolve(__dirname, assetsConfig.ASSETSCOMPDOC), 'utf-8').then((textContent) => {
 			return pWriteFile(filename, textContent, 'utf-8')
 		}).then(() => {
 			log(chalk.blue(`创建${filename} - 完成`))
