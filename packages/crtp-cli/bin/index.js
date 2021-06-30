@@ -36,6 +36,7 @@ let resFn = () => {
 
 }
 
+// 2021.07.10后删除 start
 // let init = {
 // 	'.gitignore': (filename) => {
 // 		let pathGit = path.resolve(__dirname, '../assets/.gitignore')
@@ -119,6 +120,8 @@ let resFn = () => {
 // 		})
 // 	}
 // }
+// 2021.07.10后删除 end
+
 let initFile = (fileType, userOption) => {
 	let {pReadFile, pWriteFile} = pUtil
 	pReadFile(path.resolve(__dirname, `../assets/${fileType}`), 'utf-8').then((textContent) => {
@@ -179,7 +182,6 @@ let delFile = (filename) => {
 }
 
 program
-	// .command('init <filename>')
 	.command('init <fileType>')
 	.option('-d, --debug', 'output extra debugging')
 	.option('--debug', 'output extra debugging')
@@ -187,7 +189,7 @@ program
 	.option('--packageName [packageName]', 'please input packageName') // 设置替换项可优化
 	.action((fileType, options) => {
 		initFile(fileType, options)
-
+		// 2021.07.15后删除 start
 		// // log('filename', filename)
 		// // log('options', options)
 		// let pDir = path.dirname(options.file) 
@@ -228,6 +230,7 @@ program
 		// 	// return result
 		// })
 		// .catch(error => log('error in init:\n', chalk.red(error.message)))
+		// 2021.07.15后删除 end
 	})
 
 // crtp init add <filename> --file <path/to/file.ext>
