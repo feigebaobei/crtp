@@ -8,7 +8,7 @@ const util = require('util')
 const chalk = require('chalk')
 const execa = require('execa')
 const {log} = console
-// const utils = require('../utils/index.js')
+const utils = require('../utils/index.js')
 const assetsConfig = require('./config.js')
 
 let pUtil = {
@@ -124,19 +124,24 @@ let resFn = () => {
 
 let initFile = (fileType, userOption) => {
 	let {pReadFile, pWriteFile} = pUtil
+	let fileList = userOption.file || [`./${fileType}`]
+	let maxLen = fileList.reduce((r, c) => {
+		return Math.max(r, c.length)
+	}, 0)
 	pReadFile(path.resolve(__dirname, `../assets/${fileType}`), 'utf-8').then((textContent) => {
-		return mkdirp(path.resolve(process.cwd(), path.dirname(userOption.file))).then(() => {
-			return textContent
+		return fileList.map(item => {
+			return mkdirp(path.resolve(process.cwd(), path.dirname(item))).then(() => {
+				if (userOption.packageName) {
+					textContent = textContent.replace(/\{\{packageName}}/, userOption.packageName)
+				}
+				return pWriteFile(path.resolve(process.cwd(), item), textContent, 'utf-8').then(() => {
+					log(chalk.blue(`创建${utils.fillEmpty(item, maxLen)} - 完成`))
+				})
+			}).catch(() => {
+				log(chalk.red(`创建${utils.fillEmpty(item, maxLen)} - 失败`))
+			})
+
 		})
-	}).then((textContent) => {
-		if (userOption.packageName) {
-			textContent = textContent.replace(/\{\{packageName}}/g, userOption.packageName)
-		}
-		return pWriteFile(path.resolve(process.cwd(), userOption.file), textContent, 'utf-8')
-	}).then(() => {
-		log(chalk.blue(`创建${userOption.file} - 完成`))
-	}).catch(() => {
-		log(chalk.red(`创建${userOption.file} - 失败`))
 	})
 }
 // crtp add abc.md --file ./path/to/file.md
@@ -185,7 +190,7 @@ program
 	.command('init <fileType>')
 	.option('-d, --debug', 'output extra debugging')
 	.option('--debug', 'output extra debugging')
-	.option('--file [file]', 'name and path of file')
+	.option('--file [file...]', 'name and path of file')
 	.option('--packageName [packageName]', 'please input packageName') // 设置替换项可优化
 	.action((fileType, options) => {
 		initFile(fileType, options)

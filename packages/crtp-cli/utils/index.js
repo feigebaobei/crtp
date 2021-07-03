@@ -32,7 +32,15 @@ let tranvers = function (mark, directory) {
     
     return _traverse(mark, directory);
 };
+let fillEmpty = (s, n) => {
+    if (s.length >= n) {
+        return s
+    } else {
+        return `${s}${new Array(n - s.length).fill(' ').join('')}`
+    }
+}
 module.exports = {
-	tranvers
+	tranvers,
+    fillEmpty
 }
 // export 

@@ -11,6 +11,11 @@ cd projDir
 // other command
 ```
 
+## 创建文件
+创建`<root>/file.ext`
+```
+```
+
 ## dir construct
 ```
 <root>
@@ -20,14 +25,8 @@ cd projDir
 |-- xxxx
 ```
 
-# defined
-需要定义什么。
-
 # usage
 如何使用的。
-
-# priciple
-原理
 
 # 后记
 本示例中需要注意的地方。
