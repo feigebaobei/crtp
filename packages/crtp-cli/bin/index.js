@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+// 依赖
 const program = require('commander')
 const fs = require('fs')
 const mkdirp = require('mkdirp')
@@ -7,9 +8,12 @@ const path = require('path')
 const util = require('util')
 const chalk = require('chalk')
 const execa = require('execa')
+const childProcess = require('child_process')
+
+// 工具
 const {log} = console
-// const utils = require('../utils/index.js')
-const assetsConfig = require('./config.js')
+const utils = require('../utils/index.js')
+// const assetsConfig = require('./config.js')
 
 let pUtil = {
 	pReadFile: util.promisify(fs.readFile),
@@ -36,6 +40,7 @@ let resFn = () => {
 
 }
 
+// 2021.07.10后删除 start
 // let init = {
 // 	'.gitignore': (filename) => {
 // 		let pathGit = path.resolve(__dirname, '../assets/.gitignore')
@@ -119,21 +124,28 @@ let resFn = () => {
 // 		})
 // 	}
 // }
+// 2021.07.10后删除 end
+
 let initFile = (fileType, userOption) => {
 	let {pReadFile, pWriteFile} = pUtil
+	let fileList = userOption.file || [`./${fileType}`]
+	let maxLen = fileList.reduce((r, c) => {
+		return Math.max(r, c.length)
+	}, 0)
 	pReadFile(path.resolve(__dirname, `../assets/${fileType}`), 'utf-8').then((textContent) => {
-		return mkdirp(path.resolve(process.cwd(), path.dirname(userOption.file))).then(() => {
-			return textContent
+		return fileList.map(item => {
+			return mkdirp(path.resolve(process.cwd(), path.dirname(item))).then(() => {
+				if (userOption.packageName) {
+					textContent = textContent.replace(/\{\{packageName}}/, userOption.packageName)
+				}
+				return pWriteFile(path.resolve(process.cwd(), item), textContent, 'utf-8').then(() => {
+					log(chalk.blue(`创建${utils.fillEmpty(item, maxLen)} - 完成`))
+				})
+			}).catch(() => {
+				log(chalk.red(`创建${utils.fillEmpty(item, maxLen)} - 失败`))
+			})
+
 		})
-	}).then((textContent) => {
-		if (userOption.packageName) {
-			textContent = textContent.replace(/\{\{packageName}}/g, userOption.packageName)
-		}
-		return pWriteFile(path.resolve(process.cwd(), userOption.file), textContent, 'utf-8')
-	}).then(() => {
-		log(chalk.blue(`创建${userOption.file} - 完成`))
-	}).catch(() => {
-		log(chalk.red(`创建${userOption.file} - 失败`))
 	})
 }
 // crtp add abc.md --file ./path/to/file.md
@@ -178,16 +190,57 @@ let delFile = (filename) => {
 	})
 }
 
+let	initProj = (projName, userOption) => {
+	let userPath = userOption.path || `./${projName}`
+	let projPath = path.resolve(process.cwd(), userPath)
+	mkdirp(projPath).then(() => {
+		return childProcess.exec('npm init -y', {
+            cwd: projPath
+        })
+	}).then(() => {
+		if (
+			(userOption['packageName'] && userOption['packageName'] !== projName) ||
+			(userOption['packageVersion'] && userOption['packageVersion'] !== '1.0.0') ||
+			(userOption['packageMain'] && userOption['packageMain'] !== 'index.js')
+		) {
+			let {pReadFile, pWriteFile} = pUtil
+			return pReadFile(path.resolve(projPath, './package.json'), 'utf-8').then((cont) => {
+				log(cont)
+				let p = JSON.parse(cont)
+				if (userOption['packageName'] && userOption['packageName'] !== projName) {
+					p.name = userOption['packageName']
+				}
+				if (userOption['packageVersion'] && userOption['packageVersion'] !== projName) {
+					p.version = userOption['packageVersion']
+				}
+				if (userOption['packageMain'] && userOption['packageMain'] !== projName) {
+					p.main = userOption['packageMain']
+				}
+				return pWriteFile(path.resolve(projPath, './package.json'), JSON.stringify(p), 'utf-8')
+			}).then(() => {return}).catch(() => {
+				log(chalk.red(`修改packag.json - 失败`))
+			})
+		} else {
+			return
+		}
+	})
+	.then(() => {
+		log(chalk.blue(`创建 - 成功`))
+	}).catch(() => {
+		log(chalk.red(`创建 - 失败`))
+	})
+}
+
+// crtp init <fileType> [--file ...]
 program
-	// .command('init <filename>')
 	.command('init <fileType>')
 	.option('-d, --debug', 'output extra debugging')
 	.option('--debug', 'output extra debugging')
-	.option('--file [file]', 'name and path of file')
+	.option('--file [file...]', 'name and path of file')
 	.option('--packageName [packageName]', 'please input packageName') // 设置替换项可优化
 	.action((fileType, options) => {
 		initFile(fileType, options)
-
+		// 2021.07.15后删除 start
 		// // log('filename', filename)
 		// // log('options', options)
 		// let pDir = path.dirname(options.file) 
@@ -228,6 +281,7 @@ program
 		// 	// return result
 		// })
 		// .catch(error => log('error in init:\n', chalk.red(error.message)))
+		// 2021.07.15后删除 end
 	})
 
 // crtp init add <filename> --file <path/to/file.ext>
@@ -266,4 +320,17 @@ program
 		delFile(filename)
 	})
 
+// crtp initProj --projName hi --path ./
+program
+	.command('initProj <projName>')
+	.option('--path [path]', 'input path of project')
+	// 开发几个个性packag.json中字段的选项
+	// 以package-开头
+	// .option('--packageName [pacme]', 'input name of package.json')
+	.option('--packageName [packageName]', 'input name of package.json')
+	.option('--packageVersion [packageVersion]', 'input version of package.json')
+	.option('--packageMain [packageMain]', 'input main of package.json')
+	.action((projName, options) => {
+		initProj(projName, options)
+	})
 program.parse(process.argv)

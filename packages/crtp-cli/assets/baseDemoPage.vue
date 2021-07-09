@@ -54,7 +54,7 @@ export default defineComponent({
   setup() {
     onMounted(() => {
       // console.log('mounted');
-      setTimeout(() => {}, 0);
+      setTimeout(() => {/* */}, 0);
     });
     // ref
     let progressRef = ref<HTMLElement>();
