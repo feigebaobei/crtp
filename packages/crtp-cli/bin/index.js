@@ -7,7 +7,7 @@ const mkdirp = require('mkdirp')
 const path = require('path')
 const util = require('util')
 const chalk = require('chalk')
-const execa = require('execa')
+// const execa = require('execa')
 const childProcess = require('child_process')
 
 // 工具
@@ -36,95 +36,10 @@ let defaultOptions = {
 		filename: 'baseDemoPage.vue'
 	}
 }
-let resFn = () => {
-
+let tip = (color, str) => {
+	// 可以按级别显示提示
+	log(chalk[color](str))
 }
-
-// 2021.07.10后删除 start
-// let init = {
-// 	'.gitignore': (filename) => {
-// 		let pathGit = path.resolve(__dirname, '../assets/.gitignore')
-// 		let pReadFile = util.promisify(fs.readFile)
-// 		let pWriteFile = util.promisify(fs.writeFile)
-// 		pReadFile(pathGit, 'utf-8').then((textContent) => {
-// 			return pWriteFile(filename, textContent, 'utf-8')
-// 		}).then(() => {
-// 			log(chalk.blue(`创建${filename} - 完成`))
-// 		}).catch(() => {
-// 			log(chalk.red(`创建${filename} - 失败`))
-// 		})
-// 	},
-// 	'commitlint.config.js': (filename) => {
-// 		let pathCommitlint = path.resolve(__dirname, '../assets/commitlint.config.js')
-// 		let pReadFile = util.promisify(fs.readFile)
-// 		let pWriteFile = util.promisify(fs.writeFile)
-// 		pReadFile(pathCommitlint, 'utf-8').then((textContent) => {
-// 			return pWriteFile(filename, textContent, 'utf-8')
-// 		}).then(() => {
-// 			log(chalk.blue(`创建${filename} - 完成`))
-// 		}).catch(() => {
-// 			log(chalk.red(`创建${filename} - 失败`))
-// 		})
-
-// 	},
-// 	'readme.md': (userOption, defaultOption = defaultOptions.readme) => {
-// 		let {pReadFile, pWriteFile} = pUtil
-// 		let filename = userOption.file || defaultOption.filename
-// 		let packageName = userOption.packageName || defaultOption.packageName
-// 		pReadFile(path.resolve(__dirname, '../assets/readme.md'), 'utf-8').then((textContent) => {
-// 			return pWriteFile(filename, textContent.replace(/\{\{packageName}}/g, packageName), 'utf-8')
-// 		}).then(() => {
-// 			log(chalk.blue(`创建${filename} - 完成`))
-// 		}).catch(() => {
-// 			log(chalk.red(`创建${filename} - 失败`))
-// 		})
-// 	},
-// 	'demo.md': (userOption, defaultOption = defaultOptions.demo) => {
-// 		let {pReadFile, pWriteFile} = pUtil
-// 		let filename = userOption.file || defaultOption.filename
-// 		pReadFile(path.resolve(__dirname, assetsConfig.ASSETSDEMOMD), 'utf-8').then((textContent) => {
-// 			return pWriteFile(filename, textContent, 'utf-8')
-// 		}).then(() => {
-// 			log(chalk.blue(`创建${filename} - 完成`))
-// 		}).catch(() => {
-// 			log(chalk.red(`创建${filename} - 失败`))
-// 		})
-// 	},
-// 	'baseCars.vue': (userOption, defaultOption = defaultOptions.baseCars) => {
-// 		let {pReadFile, pWriteFile} = pUtil
-// 		let filename = userOption.file || defaultOption.filename
-// 		pReadFile(path.resolve(__dirname, assetsConfig.ASSETSBASECARS), 'utf-8').then((textContent) => {
-// 			return pWriteFile(filename, textContent, 'utf-8')
-// 		}).then(() => {
-// 			log(chalk.blue(`创建${filename} - 完成`))
-// 		}).catch(() => {
-// 			log(chalk.red(`创建${filename} - 失败`))
-// 		})
-// 	},
-// 	'baseDemoPage.vue': (userOption, defaultOption = defaultOptions.demo) => {
-// 		let {pReadFile, pWriteFile} = pUtil
-// 		let filename = userOption.file || defaultOption.filename
-// 		pReadFile(path.resolve(__dirname, assetsConfig.ASSETSBASEDEMOPAGE), 'utf-8').then((textContent) => {
-// 			return pWriteFile(filename, textContent, 'utf-8')
-// 		}).then(() => {
-// 			log(chalk.blue(`创建${filename} - 完成`))
-// 		}).catch(() => {
-// 			log(chalk.red(`创建${filename} - 失败`))
-// 		})
-// 	},
-// 	'compDoc.md': (userOption, defaultOption = defaultOptions.demo) => {
-// 		let {pReadFile, pWriteFile} = pUtil
-// 		let filename = userOption.file || defaultOption.filename
-// 		pReadFile(path.resolve(__dirname, assetsConfig.ASSETSCOMPDOC), 'utf-8').then((textContent) => {
-// 			return pWriteFile(filename, textContent, 'utf-8')
-// 		}).then(() => {
-// 			log(chalk.blue(`创建${filename} - 完成`))
-// 		}).catch(() => {
-// 			log(chalk.red(`创建${filename} - 失败`))
-// 		})
-// 	}
-// }
-// 2021.07.10后删除 end
 
 let initFile = (fileType, userOption) => {
 	let {pReadFile, pWriteFile} = pUtil
@@ -148,7 +63,7 @@ let initFile = (fileType, userOption) => {
 		})
 	})
 }
-// crtp add abc.md --file ./path/to/file.md
+// crtp addFile abc.md --file ./path/to/file.md
 let addFile = (filename, userOption) => {
 	let {pReadFile, pWriteFile} = pUtil
 	pReadFile(path.resolve(process.cwd(), userOption.file), 'utf-8').then((textContent) => {
@@ -191,12 +106,19 @@ let delFile = (filename) => {
 }
 
 let	initProj = (projName, userOption) => {
-	let userPath = userOption.path || `./${projName}`
-	let projPath = path.resolve(process.cwd(), userPath)
+	let projPath = path.resolve(process.cwd(), userOption.path || '', projName)
 	mkdirp(projPath).then(() => {
-		return childProcess.exec('npm init -y', {
-            cwd: projPath
-        })
+		return new Promise((s, j) => {
+			childProcess.exec('npm init -y', {
+	            cwd: projPath
+	        }, (err) => {
+	        	if (err) {
+	        		j(err)
+	        	} else {
+		        	s()
+	        	}
+	        })
+		})
 	}).then(() => {
 		if (
 			(userOption['packageName'] && userOption['packageName'] !== projName) ||
@@ -205,7 +127,6 @@ let	initProj = (projName, userOption) => {
 		) {
 			let {pReadFile, pWriteFile} = pUtil
 			return pReadFile(path.resolve(projPath, './package.json'), 'utf-8').then((cont) => {
-				log(cont)
 				let p = JSON.parse(cont)
 				if (userOption['packageName'] && userOption['packageName'] !== projName) {
 					p.name = userOption['packageName']
@@ -216,8 +137,8 @@ let	initProj = (projName, userOption) => {
 				if (userOption['packageMain'] && userOption['packageMain'] !== projName) {
 					p.main = userOption['packageMain']
 				}
-				return pWriteFile(path.resolve(projPath, './package.json'), JSON.stringify(p), 'utf-8')
-			}).then(() => {return}).catch(() => {
+				return pWriteFile(path.resolve(projPath, './package.json'), JSON.stringify(p, null, 2), 'utf-8')
+			}).then(() => {return}).catch((e) => {
 				log(chalk.red(`修改packag.json - 失败`))
 			})
 		} else {
@@ -225,20 +146,22 @@ let	initProj = (projName, userOption) => {
 		}
 	})
 	.then(() => {
-		log(chalk.blue(`创建 - 成功`))
+		log(chalk.blue(`创建项目${projPath} - 成功`))
 	}).catch(() => {
-		log(chalk.red(`创建 - 失败`))
+		log(chalk.red(`创建项目${projPath} - 失败`))
 	})
 }
 
 // crtp init <fileType> [--file ...]
+// 在0.0.2版本删除此api
 program
 	.command('init <fileType>')
-	.option('-d, --debug', 'output extra debugging')
-	.option('--debug', 'output extra debugging')
+	// .option('-d, --debug', 'output extra debugging')
+	// .option('--debug', 'output extra debugging')
 	.option('--file [file...]', 'name and path of file')
 	.option('--packageName [packageName]', 'please input packageName') // 设置替换项可优化
 	.action((fileType, options) => {
+		tip('yellow', 'init 已经更新为 initFile。请使用initFile完成初始化文件工作。init会在0.0.2版本删除。')
 		initFile(fileType, options)
 		// 2021.07.15后删除 start
 		// // log('filename', filename)
@@ -284,49 +207,60 @@ program
 		// 2021.07.15后删除 end
 	})
 
-// crtp init add <filename> --file <path/to/file.ext>
 program
-	.command('add <filename>')
+	.command('initFile <fileType>')
+	// .option('-d, --debug', 'output extra debugging')
+	// .option('--debug', 'output extra debugging')
+	.option('--file [file...]', 'name and path of file')
+	.option('--packageName [packageName]', 'please input packageName') // 设置替换项可优化
+	.action((fileType, options) => {
+		initFile(fileType, options)
+	})
+
+// crtp init addFile <filename> --file <path/to/file.ext>
+program
+	.command('addFile <filename>')
 	.option('--file <file>', 'path to file')
 	.action((filename, options) => {
 		addFile(filename, options)
 	})
 
-// crtp list
+// crtp listFile
 program
-	.command('list')
+	.command('listFile')
 	.action(() => {
 		listFiles()
 	})
-// crtp ls
+// crtp lsFile
 // 与crtp list功能相同。是list的别名。
 program
-	.command('ls')
+	.command('lsFile')
 	.action(() => {
 		listFiles()
 	})
 
-// crtp exist <filename>
+// crtp isExistFile <filename>
 program
-	.command('exist <filename>')
+	.command('isExistFile <filename>')
 	.action((filename) => {
 		isexist(filename)
 	})
 
-// crtp del <filename>
+// crtp delFile <filename>
 program
-	.command('del <filename>')
+	.command('delFile <filename>')
 	.action((filename) => {
 		delFile(filename)
 	})
 
-// crtp initProj --projName hi --path ./
+// crtp initProj <projName> --path ./
 program
 	.command('initProj <projName>')
 	.option('--path [path]', 'input path of project')
 	// 开发几个个性packag.json中字段的选项
 	// 以package-开头
 	// .option('--packageName [pacme]', 'input name of package.json')
+	// 会把中划线命名法改为驼峰命名法。
 	.option('--packageName [packageName]', 'input name of package.json')
 	.option('--packageVersion [packageVersion]', 'input version of package.json')
 	.option('--packageMain [packageMain]', 'input main of package.json')
