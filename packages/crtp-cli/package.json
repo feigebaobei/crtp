@@ -1,6 +1,6 @@
 {
   "name": "crtp-cli",
-  "version": "0.0.1",
+  "version": "0.0.0",
   "description": "> TODO: description",
   "author": "stone <feigebaobei@gmail.com>",
   "homepage": "",
@@ -29,5 +29,6 @@
     "commander": "^7.2.0",
     "execa": "^5.1.1",
     "mkdirp": "^1.0.4"
-  }
+  },
+  "gitHead": "a2a56c6a33b13eaebc14233cde80159c1025d9c4"
 }
