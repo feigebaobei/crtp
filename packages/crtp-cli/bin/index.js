@@ -106,7 +106,6 @@ let delFile = (filename) => {
 }
 
 let	initProj = (projName, userOption) => {
-	log('userOption', userOption)
 	let projPath = path.resolve(process.cwd(), userOption.path || '', projName)
 	mkdirp(projPath).then(() => {
 		return new Promise((s, j) => {
@@ -163,7 +162,6 @@ let	initProj = (projName, userOption) => {
 	// op readme.md
 	.then(() => {
 		if (userOption.readme) {
-			log('readme', userOption.readme)
 			return new Promise((s, j) => {
 				// 因在子进程中处理，所以不会在主进程输出日志。
 				childProcess.exec('crtp initFile readme.md', {
@@ -179,7 +177,6 @@ let	initProj = (projName, userOption) => {
 	// op .gitignore
 	.then(() => {
 		if (userOption.gitignore) {
-			log('gitignore', userOption.gitignore)
 			return new Promise((s, j) => {
 				childProcess.exec('crtp initFile .gitignore', {
 						cwd: projPath
@@ -307,14 +304,14 @@ program
 	// 以package-开头
 	// .option('--packageName [pacme]', 'input name of package.json')
 	// 会把中划线命名法改为驼峰命名法。
-	.option('--packageName [packageName]', 'input name of package.json')
-	.option('--packageVersion [packageVersion]', 'input version of package.json')
-	.option('--packageMain [packageMain]', 'input main of package.json')
-	.option('--lernaInit [lernaInit]', '是否使用lerna init初始化项目？') // 如何限定为boolean
-	.option('--readme [readme]', '是否生成初始化readme.md', true)
-	.option('--no-readme [readme]', '是否生成初始化readme.md')          // 此选项的默认值是false.
-	.option('--gitignore [gitignore]', '是否生成初始化.gitignore', true)
-	.option('--no-gitignore [gitignore]', '是否生成初始化.gitignore')
+	.option('--packageName [packageName]',         'input name of package.json')
+	.option('--packageVersion [packageVersion]',   'input version of package.json')
+	.option('--packageMain [packageMain]',         'input main of package.json')
+	.option('--lernaInit [lernaInit]',             '是否使用lerna init初始化项目？')       // 如何限定为boolean
+	.option('--readme [readme]',                   '是否生成初始化readme.md', true)
+	.option('--no-readme [readme]',                '是否生成初始化readme.md')             // 此选项的默认值是false.
+	.option('--gitignore [gitignore]',             '是否生成初始化.gitignore', true)
+	.option('--no-gitignore [gitignore]',          '是否生成初始化.gitignore')
 	.action((projName, options) => {
 		initProj(projName, options)
 	})
