@@ -119,7 +119,9 @@ let	initProj = (projName, userOption) => {
 	        	}
 	        })
 		})
-	}).then(() => {
+	})
+	// op package.json
+	.then(() => {
 		if (
 			(userOption['packageName'] && userOption['packageName'] !== projName) ||
 			(userOption['packageVersion'] && userOption['packageVersion'] !== '1.0.0') ||
@@ -140,6 +142,47 @@ let	initProj = (projName, userOption) => {
 				return pWriteFile(path.resolve(projPath, './package.json'), JSON.stringify(p, null, 2), 'utf-8')
 			}).then(() => {return}).catch((e) => {
 				log(chalk.red(`修改packag.json - 失败`))
+			})
+		} else {
+			return
+		}
+	})
+	// lerna init
+	.then(() => {
+		if (userOption.lernaInit) {
+			return new Promise((s, j) => {
+				childProcess.exec('lerna init', {
+					cwd: projPath
+				}, e => e ? j(e) : s())
+			})
+		} else {
+			return
+		}
+	})
+	// op readme.md
+	.then(() => {
+		if (userOption.readme) {
+			return new Promise((s, j) => {
+				// 因在子进程中处理，所以不会在主进程输出日志。
+				childProcess.exec('crtp initFile readme.md', {
+					cwd: projPath
+				}, err => {
+					err ? j(err) : s()
+				})
+			})
+		} else {
+			return
+		}
+	})
+	// op .gitignore
+	.then(() => {
+		if (userOption.gitignore) {
+			return new Promise((s, j) => {
+				childProcess.exec('crtp initFile .gitignore', {
+						cwd: projPath
+				}, err => {
+					err ? j(err) : s()
+				})
 			})
 		} else {
 			return
@@ -261,9 +304,14 @@ program
 	// 以package-开头
 	// .option('--packageName [pacme]', 'input name of package.json')
 	// 会把中划线命名法改为驼峰命名法。
-	.option('--packageName [packageName]', 'input name of package.json')
-	.option('--packageVersion [packageVersion]', 'input version of package.json')
-	.option('--packageMain [packageMain]', 'input main of package.json')
+	.option('--packageName [packageName]',         'input name of package.json')
+	.option('--packageVersion [packageVersion]',   'input version of package.json')
+	.option('--packageMain [packageMain]',         'input main of package.json')
+	.option('--lernaInit [lernaInit]',             '是否使用lerna init初始化项目？')       // 如何限定为boolean
+	.option('--readme [readme]',                   '是否生成初始化readme.md', true)
+	.option('--no-readme [readme]',                '是否生成初始化readme.md')             // 此选项的默认值是false.
+	.option('--gitignore [gitignore]',             '是否生成初始化.gitignore', true)
+	.option('--no-gitignore [gitignore]',          '是否生成初始化.gitignore')
 	.action((projName, options) => {
 		initProj(projName, options)
 	})
