@@ -39,8 +39,15 @@ let fillEmpty = (s, n) => {
         return `${s}${new Array(n - s.length).fill(' ').join('')}`
     }
 }
+let afterDay = (day) => {
+    let date = new Date()
+    date.setTime(date.getTime() - day * 24 * 60 * 60 * 1000)
+    let [y, m, d] = [date.getFullYear(), date.getMonth(), date.getDate()]
+    return `${y}-${m + 1}-${d}`
+}
 module.exports = {
 	tranvers,
-    fillEmpty
+    fillEmpty,
+    afterDay
 }
 // export 

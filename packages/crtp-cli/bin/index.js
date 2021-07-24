@@ -195,6 +195,32 @@ let	initProj = (projName, userOption) => {
 	})
 }
 
+let changedFile = (userOption) => {
+	let cmd = 'git log --name-only'
+	if (userOption.after) {
+		cmd += ` --after="${userOption.after}"`
+	}
+	if (userOption.before) {
+		cmd += ` --before=${userOption.before}`
+	}
+	log(cmd)
+	new Promise((s, j) => {
+		childProcess.exec(cmd, {
+			cwd: process.cwd()
+		}, (err, data) => {
+			err ? j(err) : s(data)
+		})
+	}).then(data => {
+		let reg = /\n\S*\.md/g
+		let res = data.match(reg)
+		res = res.map(item => item.slice(1))
+		res = [...new Set(res)]
+		log(res)
+	})
+}
+
+
+
 // crtp init <fileType> [--file ...]
 // 在0.0.2版本删除此api
 program
@@ -315,5 +341,18 @@ program
 	.action((projName, options) => {
 		initProj(projName, options)
 	})
+
+
+// 列出指定时间范围内有改变的文件
+// crtp chengedFile <range>
+program
+	.command('changedFile')
+	.option('--after [after]', '开始时间', utils.afterDay(7))
+	.option('--before [before]', '结束时间')
+	.action((options) => {
+		changedFile(options)
+	})
+
+
 program.parse(process.argv)
 
