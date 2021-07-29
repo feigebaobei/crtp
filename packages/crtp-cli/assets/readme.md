@@ -22,7 +22,11 @@ const {{packageName}} = require('{{packageName}}');
 
 ## configuration
 默认配置文件：`path/to/file.json`。
-
+|key|description|default|enum|demo|||
+|-|-|-|-|-|-|-|
+||||||||
+||||||||
+||||||||
 ## api
 `{{packageName}}.fn(param, first: string, second: boolean = true) => void`
 description

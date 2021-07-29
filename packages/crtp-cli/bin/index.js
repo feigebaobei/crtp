@@ -51,7 +51,7 @@ let initFile = (fileType, userOption) => {
 		return fileList.map(item => {
 			return mkdirp(path.resolve(process.cwd(), path.dirname(item))).then(() => {
 				if (userOption.packageName) {
-					textContent = textContent.replace(/\{\{packageName}}/, userOption.packageName)
+					textContent = textContent.replace(/\{\{packageName}}/g, userOption.packageName)
 				}
 				return pWriteFile(path.resolve(process.cwd(), item), textContent, 'utf-8').then(() => {
 					log(chalk.blue(`创建${utils.fillEmpty(item, maxLen)} - 完成`))
@@ -61,6 +61,9 @@ let initFile = (fileType, userOption) => {
 			})
 
 		})
+	}).catch(e => {
+		log(chalk.red(`创建${fileList} - 失败`))
+		log(chalk.yellow('  不存在该基本文件'))
 	})
 }
 // crtp addFile abc.md --file ./path/to/file.md
@@ -88,9 +91,9 @@ let isexist = (file) => {
 	let {pReaddir} = pUtil
 	pReaddir(path.resolve(__dirname, '../assets')).then(files => {
 		if (files.includes(file)) {
-			log(chalk.blue('存在该基本文件'))
+			log(chalk.blue('true'))
 		} else {
-			log(chalk.yellow('不存在该基本文件'))
+			log(chalk.yellow('false'))
 		}
 	}).catch(() => {
 		log(chalk.red(`查询基本文件 - 失败`))
@@ -120,6 +123,14 @@ let	initProj = (projName, userOption) => {
 	        })
 		})
 	})
+	// 暂时没用于配置文件，所以不创建此文件
+	// create crtp.config.json
+	// .then(() => {
+	// 	// 未来从`<root>/data/`目录下取。
+	// 	let cfg = '{}'
+	// 	let {pWriteFile} = pUtil
+	// 	return pWriteFile(path.resolve(projPath, './crtp.config.json'), cfg, 'utf-8')
+	// })
 	// op package.json
 	.then(() => {
 		if (
@@ -232,48 +243,6 @@ program
 	.action((fileType, options) => {
 		tip('yellow', 'init 已经更新为 initFile。请使用initFile完成初始化文件工作。init会在0.0.2版本删除。')
 		initFile(fileType, options)
-		// 2021.07.15后删除 start
-		// // log('filename', filename)
-		// // log('options', options)
-		// let pDir = path.dirname(options.file) 
-		// // log(chalk.red(pDir))
-		// // log('pDir', pDir)
-		// mkdirp(pDir).then((str) => {
-		// 	// let f = options.file.split('/')
-		// 	// f = f[f.length - 1]
-		// 	// let result = ''
-		// 	switch (fileType) {
-		// 		// assets
-		// 		// case '.gitignore':
-		// 		// 	init['.gitignore'](filename)
-		// 		// 	break;
-		// 		// case 'commitlint.config.js':
-		// 		// 	init['commitlint.config.js'](filename)
-		// 		// 	break;
-		// 		case 'README.md':
-		// 		case 'readme.md':
-		// 			init['readme.md'](options)
-		// 			break;
-		// 		case 'demo.md':
-		// 			init['demo.md'](options)
-		// 			break;
-		// 		case 'baseCars.vue':
-		// 			init['baseCars.vue'](options)
-		// 			break;
-		// 		case 'baseDemoPage.vue':
-		// 			init['baseDemoPage.vue'](options)
-		// 			break;
-		// 		case 'compDoc.md':
-		// 			init['compDoc.md'](options)
-		// 			break;
-		// 		default:
-		// 			log(chalk.yellow('暂时不支持初始化该文件'))
-		// 			break;
-		// 	}
-		// 	// return result
-		// })
-		// .catch(error => log('error in init:\n', chalk.red(error.message)))
-		// 2021.07.15后删除 end
 	})
 
 program
@@ -342,7 +311,6 @@ program
 		initProj(projName, options)
 	})
 
-
 // 列出指定时间范围内有改变的文件
 // crtp chengedFile <range>
 program
@@ -352,7 +320,6 @@ program
 	.action((options) => {
 		changedFile(options)
 	})
-
 
 program.parse(process.argv)
 

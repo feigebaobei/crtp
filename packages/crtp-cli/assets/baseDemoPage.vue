@@ -25,7 +25,7 @@
     <div class="">
       <p>v-model:{{ baseValue }} @change="changeHandler"</p>
       <ca-progress id="progressId" />
-      <p>dom中得到的原生属性 {{ progressOriginRef }}</p>
+      <!-- <p>dom中得到的原生属性 {{ progressOriginRef }}</p> -->
     </div>
   </demo-block>
   <demo-block title="事件 & 方法">
@@ -52,10 +52,10 @@ export default defineComponent({
     CaProgress,
   },
   setup() {
-    onMounted(() => {
-      // console.log('mounted');
-      setTimeout(() => {/* */}, 0);
-    });
+    // onMounted(() => {
+    //   // console.log('mounted');
+    //   setTimeout(() => {/* */}, 0);
+    // });
     // ref
     let progressRef = ref<HTMLElement>();
     let progressOriginRef = ref("");
@@ -82,4 +82,6 @@ export default defineComponent({
 });
 </script>
 
-<style lang="scss"></style>
+<style lang="scss" scoped>
+
+</style>

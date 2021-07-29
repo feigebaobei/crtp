@@ -1,8 +1,5 @@
 <template>
-  <div
-    :class="[CaBaseCars, ...$attrs.class]"
-    :style="$attrs.style"
-  >CaBaseCars</div>
+  <div>CaBaseCars</div>
 </template>
 
 <script lang="ts">
@@ -10,6 +7,7 @@
 import { defineComponent, onMounted, computed, ref } from "vue";
 // 组件
 // import CaInputNumber from '../../InputNumber/src/index.vue';
+// import CaIcon from '@/packages/Icon/src/index.vue';
 // 验证
 // type/interface
 // 配置项
@@ -19,6 +17,7 @@ import { defineComponent, onMounted, computed, ref } from "vue";
 export default defineComponent({
   name: "CaBaseCars",
   // components: {
+    // CaIcon
     //     CaInputNumber,
   // },
   // directives
@@ -41,9 +40,9 @@ export default defineComponent({
     // evnet fn
     // watch
     // lifeCircle
-    onMounted(() => {
-      console.log("mounted");
-    });
+    // onMounted(() => {
+    //   console.log("mounted");
+    // });
     return {
       // variable
       // ref
@@ -56,4 +55,6 @@ export default defineComponent({
 });
 </script>
 
-<style lang="scss" src="./index.scss"></style>
+<style lang="scss" scoped>
+
+</style>
