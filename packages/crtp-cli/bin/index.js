@@ -245,6 +245,9 @@ program
 		initFile(fileType, options)
 	})
 
+// crtp initFile <fileType> [--file ...]
+// 以指定基本文件为模板创建文件。
+// 测试通过
 program
 	.command('initFile <fileType>')
 	// .option('-d, --debug', 'output extra debugging')
@@ -256,6 +259,8 @@ program
 	})
 
 // crtp init addFile <filename> --file <path/to/file.ext>
+// 把指定文件设置为基本文件
+// 测试通过
 program
 	.command('addFile <filename>')
 	.option('--file <file>', 'path to file')
@@ -264,12 +269,17 @@ program
 	})
 
 // crtp listFile
+// 列出所有基本文件
+// 测试通过
 program
 	.command('listFile')
 	.action(() => {
 		listFiles()
 	})
+
 // crtp lsFile
+// 列出所有基本文件
+// 测试通过
 // 与crtp list功能相同。是list的别名。
 program
 	.command('lsFile')
@@ -277,7 +287,22 @@ program
 		listFiles()
 	})
 
+// crtp -v
+// crtp --Version
+// 列出crtp-cli的版本号
+// 测试通过
+program
+	// .command('-v')
+	.option('-v', 'list version of crtp-cli')
+	.option('--Version', 'list version of crtp-cli')
+	.action(() => {
+		// ()
+		log(chalk.blue('0.0.1'))
+	})
+
 // crtp isExistFile <filename>
+// 查询指定基本文件是否存在
+// 测试通过
 program
 	.command('isExistFile <filename>')
 	.action((filename) => {
@@ -285,6 +310,8 @@ program
 	})
 
 // crtp delFile <filename>
+// 删除指定基本文件
+// 测试通过
 program
 	.command('delFile <filename>')
 	.action((filename) => {
