@@ -1,6 +1,6 @@
 {
   "name": "use-crtp",
-  "version": "0.0.0",
+  "version": "0.0.1-beta.1",
   "description": "> TODO: description",
   "author": "feigebaobei <18515195415@163.com>",
   "homepage": "https://github.com/feigebaobei/crtp#readme",
@@ -24,6 +24,6 @@
     "url": "https://github.com/feigebaobei/crtp/issues"
   },
   "dependencies": {
-    "crtp-cli": "^0.0.0"
+    "crtp-cli": "^0.0.1-beta.1"
   }
 }
