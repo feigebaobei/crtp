@@ -16,7 +16,8 @@
   "files": [
     "lib",
     "bin",
-    "assets"
+    "assets",
+    "utils"
   ],
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
