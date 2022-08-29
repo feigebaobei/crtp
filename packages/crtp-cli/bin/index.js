@@ -14,6 +14,11 @@ const childProcess = require('child_process')
 const {log} = console
 const utils = require('../utils/index.js')
 // const assetsConfig = require('./config.js')
+const customConfig = require(path.resolve(process.cwd(), './crtp.config.js'))
+const defaultConfig = require('../utils/defaultConfig.js')
+const config = Object.assign({}, defaultConfig, customConfig)
+console.log('config', config)
+
 
 let pUtil = {
 	pReadFile: util.promisify(fs.readFile),
@@ -296,8 +301,9 @@ program
 	.option('-v', 'list version of crtp-cli')
 	.option('--Version', 'list version of crtp-cli')
 	.action(() => {
-		// ()
-		log(chalk.blue('0.0.1'))
+		pUtil.pReadFile(path.resolve(__dirname, '../package.json'), 'utf-8').then(res => {
+			log(JSON.parse(res).version)
+		})
 	})
 
 // crtp isExistFile <filename>

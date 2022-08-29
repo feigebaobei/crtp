@@ -1,15 +1,15 @@
 # `crtp-cli`
 
 ## overview
-> 目标是前端项目工程化工具。
+> 管理模板文件/目录的工具。
 
 ### feature
 - 初始化项目
 - 初始化文件
-    + 添加自定义基础文件
-    + 列出自定义基础文件
-    + 查询自定义基础文件
-    + 删除自定义基础文件
+    + 添加自定义模板文件
+    + 列出自定义模板文件
+    + 查询自定义模板文件
+    + 删除自定义模板文件
 
 ## install
 `npm i crtp-cli -g`
@@ -18,14 +18,14 @@
 ```
 // 在指定目录初始化一个指定项目。可在选项中修改packag.json的一部分字段。
 crtp initProj projName --path ./first --packageName 'pn'
-// 在指定目录创建一个指定的基础文件
+// 在指定目录创建一个指定的模板文件
 crtp ininFile readme.md --file ./first/projName
-// 添加自定义的基础文件
+// 添加自定义的模板文件
 crtp addFile first.json --file ./first/projName/package.json
 ```
 
 ## configuration
-默认配置文件：`<root>/crtp.config.json`
+默认配置文件：`<root>/crtp.config.js`
 
 ## api
 ```
@@ -47,7 +47,7 @@ crtp delFile <filename>
 
 ## basc file
 用于初始化文件。
-已内置的基础文件：
+已内置的模板文件：
 - readme.md
 - demo.md
 - .gitignore
@@ -59,8 +59,8 @@ crtp delFile <filename>
 ### 初始化项目
 使用`child_process`调用`npm init -y`。现修改package.json。
 
-### 操作基础文件
-在此包的`<root>/assets/`中保存着基础文件。初始化时从此读取再写入指定位置。添加时从指定位置读取再写入此目录。
+### 操作模板文件
+在此包的`<root>/assets/`中保存着模板文件。初始化时从此读取再写入指定位置。添加时从指定位置读取再写入此目录。
 
 ### uml
 ```
