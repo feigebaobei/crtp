@@ -3,6 +3,7 @@
 // 依赖
 const program = require('commander')
 const fs = require('fs')
+const fsPromises = require('fs/promises')
 const mkdirp = require('mkdirp')
 const path = require('path')
 const util = require('util')
@@ -14,8 +15,12 @@ const childProcess = require('child_process')
 const {log} = console
 const utils = require('../utils/index.js')
 // const assetsConfig = require('./config.js')
-const customConfig = require(path.resolve(process.cwd(), './crtp.config.js'))
+// const customConfig = require(path.resolve(process.cwd(), './crtp.config.js'))
+let customConfig = {}
+// let t = fs.statSync(path.resolve(process.cwd(), './crtp.confisg.js'))
+// log('wertyt43', t)
 const defaultConfig = require('../utils/defaultConfig.js')
+// const { dirname } = require('path')
 const config = Object.assign({}, defaultConfig, customConfig)
 console.log('config', config)
 
@@ -24,7 +29,8 @@ let pUtil = {
 	pReadFile: util.promisify(fs.readFile),
 	pWriteFile: util.promisify(fs.writeFile),
 	pReaddir: util.promisify(fs.readdir),
-	pRm: util.promisify(fs.rm)
+	pRm: util.promisify(fs.rm),
+	pFstat: util.promisify(fs.fstat),
 }
 let defaultOptions = {
 	readme: {
@@ -71,6 +77,46 @@ let initFile = (fileType, userOption) => {
 		log(chalk.yellow('  不存在该基本文件'))
 	})
 }
+// 创建目录
+// 兼容创建文件
+let initDir = (dirName, userOption) => {
+	let createDir = (sourcePath, targetPath) => {
+		fsPromises.stat(targetPath).then(stats => {
+		}).catch(err => {
+			// 若不存在，则创建
+			return fsPromises.mkdir(targetPath)
+		}).then(async function () {
+			// log(res)
+			// 已经创建目标目录
+			let elementList = await fsPromises.readdir(sourcePath)
+			elementList.forEach(async function(element) {
+				let elementPath = path.resolve(sourcePath, `./${element}`)
+				let stats = await fsPromises.stat(elementPath)
+				if (stats.isDirectory()) {
+					// log(`这是一个目录 ${elementPath}`)
+					createDir(elementPath, path.resolve(targetPath, `./${element}`))
+				} else {
+					// log(`这是一个文件 ${elementPath}`)
+					let cont = await fsPromises.readFile(elementPath, 'utf-8')
+					let tp = path.resolve(targetPath, `./${element}`)
+					let temp = await fsPromises.writeFile(tp, cont)
+					if (!temp) {
+						log(`创建成功 ${tp}`)
+					}
+				}
+			})
+		})
+	}
+	let resolvedPath = path.resolve(__dirname, `../assets/${dirName}`)
+	fsPromises.stat(resolvedPath).then(stats => {
+		userOption.dir.forEach(dir => {
+			let targetPath = path.resolve(process.cwd(), dir)
+			createDir(resolvedPath, targetPath)
+		})
+	}).catch(err => {
+		log(`不存在该模板目录 ${resolvedPath}`)
+	})
+}
 // crtp addFile abc.md --file ./path/to/file.md
 let addFile = (filename, userOption) => {
 	let {pReadFile, pWriteFile} = pUtil
@@ -85,6 +131,7 @@ let addFile = (filename, userOption) => {
 let listFiles = () => {
 	let {pReaddir} = pUtil
 	pReaddir(path.resolve(__dirname, '../assets')).then(files => {
+		// 需要兼容 dir
 		files.forEach(item => {
 			log(chalk.blue(item))
 		})
@@ -236,21 +283,22 @@ let changedFile = (userOption) => {
 }
 
 
-
+// 2022.10.01 后删除
 // crtp init <fileType> [--file ...]
 // 在0.0.2版本删除此api
-program
-	.command('init <fileType>')
-	// .option('-d, --debug', 'output extra debugging')
-	// .option('--debug', 'output extra debugging')
-	.option('--file [file...]', 'name and path of file')
-	.option('--packageName [packageName]', 'please input packageName') // 设置替换项可优化
-	.action((fileType, options) => {
-		tip('yellow', 'init 已经更新为 initFile。请使用initFile完成初始化文件工作。init会在0.0.2版本删除。')
-		initFile(fileType, options)
-	})
+// program
+// 	.command('init <fileType>')
+// 	// .option('-d, --debug', 'output extra debugging')
+// 	// .option('--debug', 'output extra debugging')
+// 	.option('--file [file...]', 'name and path of file')
+// 	.option('--packageName [packageName]', 'please input packageName') // 设置替换项可优化
+// 	.action((fileType, options) => {
+// 		tip('yellow', 'init 已经更新为 initFile。请使用initFile完成初始化文件工作。init会在0.0.2版本删除。')
+// 		initFile(fileType, options)
+// 	})
 
 // crtp initFile <fileType> [--file ...]
+
 // 以指定基本文件为模板创建文件。
 // 测试通过
 program
@@ -258,6 +306,7 @@ program
 	// .option('-d, --debug', 'output extra debugging')
 	// .option('--debug', 'output extra debugging')
 	.option('--file [file...]', 'name and path of file')
+	// 在0.0.4版本不支持此选项。
 	.option('--packageName [packageName]', 'please input packageName') // 设置替换项可优化
 	.action((fileType, options) => {
 		initFile(fileType, options)
@@ -271,6 +320,15 @@ program
 	.option('--file <file>', 'path to file')
 	.action((filename, options) => {
 		addFile(filename, options)
+	})
+
+// crtp initDir <dirName> [--dir ...]
+program
+	.command('initDir <dirName> 初始化的目录')
+	.option('--dir [dir...]', 'name and path of dir', [])
+	.action((dirName, options) => {
+		// console.log('params', dirName, options)
+		initDir(dirName, options)
 	})
 
 // crtp listFile
@@ -296,15 +354,15 @@ program
 // crtp --Version
 // 列出crtp-cli的版本号
 // 测试通过
-program
-	// .command('-v')
-	.option('-v', 'list version of crtp-cli')
-	.option('--Version', 'list version of crtp-cli')
-	.action(() => {
-		pUtil.pReadFile(path.resolve(__dirname, '../package.json'), 'utf-8').then(res => {
-			log(JSON.parse(res).version)
-		})
-	})
+// program
+// 	// .command('-v')
+// 	.option('-v', 'list version of crtp-cli')
+// 	.option('--Version', 'list version of crtp-cli')
+// 	.action(() => {
+// 		pUtil.pReadFile(path.resolve(__dirname, '../package.json'), 'utf-8').then(res => {
+// 			log(JSON.parse(res).version)
+// 		})
+// 	})
 
 // crtp isExistFile <filename>
 // 查询指定基本文件是否存在
