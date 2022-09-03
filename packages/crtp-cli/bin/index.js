@@ -24,7 +24,7 @@ const defaultConfig = require('../utils/defaultConfig.js')
 const config = Object.assign({}, defaultConfig, customConfig)
 console.log('config', config)
 
-
+// 考虑删除它。使用fsPromises替换。
 let pUtil = {
 	pReadFile: util.promisify(fs.readFile),
 	pWriteFile: util.promisify(fs.writeFile),
@@ -32,24 +32,52 @@ let pUtil = {
 	pRm: util.promisify(fs.rm),
 	pFstat: util.promisify(fs.fstat),
 }
-let defaultOptions = {
-	readme: {
-		packageName: 'packageName',
-		filename: 'readme.md'
-	},
-	demo: {
-		filename: 'demo.md'
-	},
-	baseCars: {
-		filename: 'baseCars.vue'
-	},
-	baseDemoPage: {
-		filename: 'baseDemoPage.vue'
-	}
-}
+// 考虑删除它。因默认配置项从配置文件中取得
+// let defaultOptions = {
+// 	readme: {
+// 		packageName: 'packageName',
+// 		filename: 'readme.md'
+// 	},
+// 	demo: {
+// 		filename: 'demo.md'
+// 	},
+// 	baseCars: {
+// 		filename: 'baseCars.vue'
+// 	},
+// 	baseDemoPage: {
+// 		filename: 'baseDemoPage.vue'
+// 	}
+// }
 let tip = (color, str) => {
 	// 可以按级别显示提示
 	log(chalk[color](str))
+}
+let createDir = (sourcePath, targetPath) => {
+	fsPromises.stat(targetPath).then(stats => {
+	}).catch(err => {
+		// 若不存在，则创建
+		return fsPromises.mkdir(targetPath)
+	}).then(async function () {
+		// log(res)
+		// 已经创建目标目录
+		let elementList = await fsPromises.readdir(sourcePath)
+		elementList.forEach(async function(element) {
+			let elementPath = path.resolve(sourcePath, `./${element}`)
+			let stats = await fsPromises.stat(elementPath)
+			if (stats.isDirectory()) {
+				// log(`这是一个目录 ${elementPath}`)
+				createDir(elementPath, path.resolve(targetPath, `./${element}`))
+			} else {
+				// log(`这是一个文件 ${elementPath}`)
+				let cont = await fsPromises.readFile(elementPath, 'utf-8')
+				let tp = path.resolve(targetPath, `./${element}`)
+				let temp = await fsPromises.writeFile(tp, cont)
+				if (!temp) {
+					log(`创建成功 ${tp}`)
+				}
+			}
+		})
+	})
 }
 
 let initFile = (fileType, userOption) => {
@@ -74,39 +102,12 @@ let initFile = (fileType, userOption) => {
 		})
 	}).catch(e => {
 		log(chalk.red(`创建${fileList} - 失败`))
-		log(chalk.yellow('  不存在该基本文件'))
+		log(chalk.yellow('  不存在该模板文件'))
 	})
 }
 // 创建目录
 // 兼容创建文件
 let initDir = (dirName, userOption) => {
-	let createDir = (sourcePath, targetPath) => {
-		fsPromises.stat(targetPath).then(stats => {
-		}).catch(err => {
-			// 若不存在，则创建
-			return fsPromises.mkdir(targetPath)
-		}).then(async function () {
-			// log(res)
-			// 已经创建目标目录
-			let elementList = await fsPromises.readdir(sourcePath)
-			elementList.forEach(async function(element) {
-				let elementPath = path.resolve(sourcePath, `./${element}`)
-				let stats = await fsPromises.stat(elementPath)
-				if (stats.isDirectory()) {
-					// log(`这是一个目录 ${elementPath}`)
-					createDir(elementPath, path.resolve(targetPath, `./${element}`))
-				} else {
-					// log(`这是一个文件 ${elementPath}`)
-					let cont = await fsPromises.readFile(elementPath, 'utf-8')
-					let tp = path.resolve(targetPath, `./${element}`)
-					let temp = await fsPromises.writeFile(tp, cont)
-					if (!temp) {
-						log(`创建成功 ${tp}`)
-					}
-				}
-			})
-		})
-	}
 	let resolvedPath = path.resolve(__dirname, `../assets/${dirName}`)
 	fsPromises.stat(resolvedPath).then(stats => {
 		userOption.dir.forEach(dir => {
@@ -123,11 +124,31 @@ let addFile = (filename, userOption) => {
 	pReadFile(path.resolve(process.cwd(), userOption.file), 'utf-8').then((textContent) => {
 		return pWriteFile(path.resolve(__dirname, '../assets', filename), textContent, 'utf-8')
 	}).then(() => {
-		log(chalk.blue(`添加基本文件${filename} - 完成`))
+		log(chalk.blue(`添加模板文件${filename} - 完成`))
 	}).catch(() => {
-		log(chalk.red(`添加基本文件${filename} - 失败`))
+		log(chalk.red(`添加模板文件${filename} - 失败`))
 	})
 }
+let addDir = (dirName, userOption) => {
+	// log(dirName, userOption)
+	// let dirPath = path.resolve(process.cwd(), userOption.dir)
+	// log(dirPath)
+	// 检查模析文件是否存在
+	// log('t', t)
+	fsPromises.stat(path.resolve(__dirname, '../', config.asserts, `./${dirName}`)).then(stats => {
+		log(chalk.red('该模板已经存在'))
+		// 询问用户是否覆盖
+	}).catch(() => {
+		let sourcePath = path.resolve(process.cwd(), userOption.dir)
+		let targetPath = path.resolve(__dirname, '../', config.asserts, `./${dirName}`)
+		fsPromises.mkdir(targetPath).then(() => {
+			createDir(sourcePath, targetPath)
+		}).catch(err => {
+			log(err)
+		})
+	})
+}
+
 // 考虑要删除
 // 统一使用 ls list
 // 在0.0.4版本删除此api
@@ -139,7 +160,7 @@ let listFiles = () => {
 			log(chalk.blue(item))
 		})
 	}).catch(() => {
-		log(chalk.red(`查询基本文件 - 失败`))
+		log(chalk.red(`查询模板文件 - 失败`))
 	})
 }
 let list = () => {
@@ -163,15 +184,15 @@ let isexist = (file) => {
 			log(chalk.yellow('false'))
 		}
 	}).catch(() => {
-		log(chalk.red(`查询基本文件 - 失败`))
+		log(chalk.red(`查询模板文件 - 失败`))
 	})
 }
 let delFile = (filename) => {
 	let {pRm} = pUtil
 	pRm(path.resolve(__dirname, '../assets', filename)).then(() => {
-		log(chalk.blue(`删除基本文件${filename} - 成功`))
+		log(chalk.blue(`删除模板文件${filename} - 成功`))
 	}).catch(() => {
-		log(chalk.red(`删除基本文件${filename} - 失败`))
+		log(chalk.red(`删除模板文件${filename} - 失败`))
 	})
 }
 
@@ -316,6 +337,7 @@ let changedFile = (userOption) => {
 
 // crtp init
 // 初始化配置文件
+// 测试通过
 program
 	.command('init [init config file]')
 	.action(async function () {
@@ -325,7 +347,7 @@ program
 		log(chalk.blue('初始化完成'))
 	})
 
-// 以指定基本文件为模板创建文件。
+// 以指定模板文件为模板创建文件。
 // 测试通过
 program
 	.command('initFile <fileType>')
@@ -338,8 +360,8 @@ program
 		initFile(fileType, options)
 	})
 
-// crtp init addFile <filename> --file <path/to/file.ext>
-// 把指定文件设置为基本文件
+// crtp addFile <filename> --file <path/to/file.ext>
+// 把指定文件设置为模板文件
 // 测试通过
 program
 	.command('addFile <filename>')
@@ -350,15 +372,26 @@ program
 
 // crtp initDir <dirName> [--dir ...]
 program
-	.command('initDir <dirName> 初始化的目录')
+	.command('initDir <dirName>')
+	.description('初始化的目录')
 	.option('--dir [dir...]', 'name and path of dir', [])
 	.action((dirName, options) => {
-		// console.log('params', dirName, options)
 		initDir(dirName, options)
 	})
 
+// crtp addDir <dirname> --dir <path/to/localDir>
+// 把指定目录设置为模板目录
+// 测试通过
+program
+	.command('addDir <dirName>')
+	.description('把指定目录设置为模板目录')
+	.option('--dir <dir>', 'path to local dir (绝对路径)')
+	.action((dirName, options) => {
+		addDir(dirName, options)
+	})
+
 // crtp listFile
-// 列出所有基本文件
+// 列出所有模板文件
 // 测试通过
 program
 	.command('listFile')
@@ -368,7 +401,7 @@ program
 	})
 
 // crtp lsFile
-// 列出所有基本文件
+// 列出所有模板文件
 // 测试通过
 // 与crtp list功能相同。是list的别名。
 program
@@ -379,7 +412,7 @@ program
 	})
 
 // crtp list
-// 列出所有基本文件
+// 列出所有模板文件
 // 测试通过
 // crtp ls
 program
@@ -405,7 +438,7 @@ program
 	})
 
 // crtp isExistFile <filename>
-// 查询指定基本文件是否存在
+// 查询指定模板文件是否存在
 // 测试通过
 program
 	.command('isExistFile <filename>')
@@ -414,7 +447,7 @@ program
 	})
 
 // crtp delFile <filename>
-// 删除指定基本文件
+// 删除指定模板文件
 // 测试通过
 program
 	.command('delFile <filename>')

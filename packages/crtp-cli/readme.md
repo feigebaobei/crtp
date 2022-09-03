@@ -82,3 +82,6 @@ crtp delFile <filename>
 > 开发模块的顺序
 > 生成文档
 > 生成change log
+> 优先级 cli > crtp.config.js > 默认配置
+> 支持 cli / js
+
