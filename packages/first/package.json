@@ -1,6 +1,7 @@
 {
   "name": "first",
   "version": "0.0.3",
+  "private": true,
   "description": "Now I’m the model of a modern major general / The venerated Virginian veteran whose men are all / Lining up, to put me up on a pedestal / Writin’ letters to relatives / Embellishin’ my elegance and eloquence / But the elephant is in the room / The truth is in ya face when ya hear the British cannons go / BOOM",
   "keywords": [],
   "author": "feigebaobei <18515195415@163.com>",
@@ -25,5 +26,6 @@
   "bugs": {
     "url": "https://github.com/feigebaobei/crtp/issues"
   },
-  "homepage": "https://github.com/feigebaobei/crtp#readme"
+  "homepage": "https://github.com/feigebaobei/crtp#readme",
+  "gitHead": "12f882a08bfff6ae8bef1b3ccf1430d0aae42257"
 }
