@@ -383,15 +383,16 @@ program
 // crtp --Version
 // 列出crtp-cli的版本号
 // 测试通过
-// program
-// 	// .command('-v')
-// 	.option('-v', 'list version of crtp-cli')
-// 	.option('--Version', 'list version of crtp-cli')
-// 	.action(() => {
-// 		pUtil.pReadFile(path.resolve(__dirname, '../package.json'), 'utf-8').then(res => {
-// 			log(JSON.parse(res).version)
-// 		})
-// 	})
+program
+	// .command('-v')
+	// .option('-v', 'list version of crtp-cli')
+	// .option('--Version', 'list version of crtp-cli')
+	.option('-v, --Version', 'list version of crtp-cli')
+	.action(() => {
+		pUtil.pReadFile(path.resolve(__dirname, '../package.json'), 'utf-8').then(res => {
+			log(JSON.parse(res).version)
+		})
+	})
 
 // crtp isExistFile <filename>
 // 查询指定基本文件是否存在

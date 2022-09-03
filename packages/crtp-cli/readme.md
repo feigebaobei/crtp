@@ -31,17 +31,17 @@ crtp addFile first.json --file ./first/projName/package.json
 ```
 // 创建项目
 crtp initProj <projName> [--path <projPath>]
-// 创建基本文件
+// 创建模板文件
 crtp initFile <fileType> [--file file...] [--packageName]
-// 安装基本文件
+// 安装模板文件
 crtp addFile <filename> <file>
-// 列出已经安装的基本文件
+// 列出已经安装的模板文件
 crtp listFile
-// 列出已经安装的基本文件
+// 列出已经安装的模板文件
 crtp lsFile
-// 检查是否安装指定基本文件
+// 检查是否安装指定模板文件
 crtp isExistFile <filename>
-// 删除指定的已安装基本文件
+// 删除指定的已安装模板文件
 crtp delFile <filename>
 ```
 
@@ -53,7 +53,7 @@ crtp delFile <filename>
 - .gitignore
 
 ## principle
-- 基本文件应该由脚本生成。
+- 模板文件应该由脚本生成。
 - 应该由脚本控制项目结构变化。
 
 ### 初始化项目
@@ -74,7 +74,7 @@ crtp delFile <filename>
 > 解决配置文件太多的问题
 > 控制安装配置文件是否独立配置文件
 > 配置文件
-    > 在配置文件中为指定的基本文件设置插件列表。
+    > 在配置文件中为指定的模板文件设置插件列表。
     > 为指定的基本设置插件。pluginFn(content) -> contentOther
 > 可开发插件。
 > 本项目中基于各开发类框架开发。为它们提供配置文件。或在一个目录中统一管理配置文件，或……
