@@ -128,7 +128,11 @@ let addFile = (filename, userOption) => {
 		log(chalk.red(`添加基本文件${filename} - 失败`))
 	})
 }
+// 考虑要删除
+// 统一使用 ls list
+// 在0.0.4版本删除此api
 let listFiles = () => {
+	tip('yellow', 'init 已经更新为 initFile。请使用initFile完成初始化文件工作。init会在0.0.2版本删除。')
 	let {pReaddir} = pUtil
 	pReaddir(path.resolve(__dirname, '../assets')).then(files => {
 		// 需要兼容 dir
@@ -139,8 +143,20 @@ let listFiles = () => {
 		log(chalk.red(`查询基本文件 - 失败`))
 	})
 }
+let list = () => {
+	fsPromises.readdir(path.resolve(__dirname, '../assets')).then(async function (elementList) {
+		elementList.forEach(async function(ele) {
+			let stats = await fsPromises.stat(path.resolve(__dirname, `../assets/${ele}`))
+			isDir = stats.isDirectory()
+			// 考虑对齐后输出
+			log(`${chalk.blue(ele)}		${isDir ? 'directory' : 'file'}`)
+		})
+	})
+}
+// 是否存在
 let isexist = (file) => {
 	let {pReaddir} = pUtil
+	// 可以使用fsPromises重写
 	pReaddir(path.resolve(__dirname, '../assets')).then(files => {
 		if (files.includes(file)) {
 			log(chalk.blue('true'))
@@ -337,6 +353,7 @@ program
 program
 	.command('listFile')
 	.action(() => {
+		tip('yellow', 'listFile 已经更新为 list。请使用list列出模板文件或目录。listFile会在0.0.4版本删除。')
 		listFiles()
 	})
 
@@ -347,7 +364,19 @@ program
 program
 	.command('lsFile')
 	.action(() => {
+		tip('yellow', 'lsFile 已经更新为 list。请使用list列出模板文件或目录。lsFile会在0.0.4版本删除。')
 		listFiles()
+	})
+
+// crtp list
+// 列出所有基本文件
+// 测试通过
+// crtp ls
+program
+	.command('list')
+	.alias('ls')
+	.action(() => {
+		list()
 	})
 
 // crtp -v
