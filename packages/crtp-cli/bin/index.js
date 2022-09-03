@@ -132,7 +132,6 @@ let addFile = (filename, userOption) => {
 // 统一使用 ls list
 // 在0.0.4版本删除此api
 let listFiles = () => {
-	tip('yellow', 'init 已经更新为 initFile。请使用initFile完成初始化文件工作。init会在0.0.2版本删除。')
 	let {pReaddir} = pUtil
 	pReaddir(path.resolve(__dirname, '../assets')).then(files => {
 		// 需要兼容 dir
@@ -314,6 +313,17 @@ let changedFile = (userOption) => {
 // 	})
 
 // crtp initFile <fileType> [--file ...]
+
+// crtp init
+// 初始化配置文件
+program
+	.command('init [init config file]')
+	.action(async function () {
+		let projPath = path.resolve(process.cwd())
+		let cont = await fsPromises.readFile(path.resolve(__dirname, '../assets/crtp.config.js'), 'utf-8')
+		fsPromises.writeFile(path.resolve(projPath, './crtp.config.js'), cont)
+		log(chalk.blue('初始化完成'))
+	})
 
 // 以指定基本文件为模板创建文件。
 // 测试通过
