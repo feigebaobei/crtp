@@ -22,7 +22,7 @@ let customConfig = {}
 const defaultConfig = require('../utils/defaultConfig.js')
 // const { dirname } = require('path')
 const config = Object.assign({}, defaultConfig, customConfig)
-console.log('config', config)
+// console.log('config', config)
 
 // 考虑删除它。使用fsPromises替换。
 let pUtil = {
