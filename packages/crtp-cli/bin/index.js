@@ -339,7 +339,8 @@ let changedFile = (userOption) => {
 // 初始化配置文件
 // 测试通过
 program
-	.command('init [init config file]')
+	.command('init')
+	.description('初始化配置文件')
 	.action(async function () {
 		let projPath = path.resolve(process.cwd())
 		let cont = await fsPromises.readFile(path.resolve(__dirname, '../assets/crtp.config.js'), 'utf-8')
@@ -353,10 +354,12 @@ program
 	.command('initFile <fileType>')
 	// .option('-d, --debug', 'output extra debugging')
 	// .option('--debug', 'output extra debugging')
+	.description('以指定模板文件为模板创建文件。')
 	.option('--file [file...]', 'name and path of file')
 	// 在0.0.4版本不支持此选项。
 	.option('--packageName [packageName]', 'please input packageName') // 设置替换项可优化
 	.action((fileType, options) => {
+		tip('在0.0.4版本不再支持 packageName 选项。')
 		initFile(fileType, options)
 	})
 
@@ -365,6 +368,7 @@ program
 // 测试通过
 program
 	.command('addFile <filename>')
+	.description('把指定文件设置为模板文件')
 	.option('--file <file>', 'path to file')
 	.action((filename, options) => {
 		addFile(filename, options)
@@ -373,7 +377,7 @@ program
 // crtp initDir <dirName> [--dir ...]
 program
 	.command('initDir <dirName>')
-	.description('初始化的目录')
+	.description('按指定模板目录生成目录')
 	.option('--dir [dir...]', 'name and path of dir', [])
 	.action((dirName, options) => {
 		initDir(dirName, options)
@@ -442,6 +446,7 @@ program
 // 测试通过
 program
 	.command('isExistFile <filename>')
+	.description('查询指定模板文件是否存在')
 	.action((filename) => {
 		isexist(filename)
 	})
@@ -451,6 +456,7 @@ program
 // 测试通过
 program
 	.command('delFile <filename>')
+	.description('删除指定模板文件')
 	.action((filename) => {
 		delFile(filename)
 	})
@@ -479,6 +485,7 @@ program
 // crtp chengedFile <range>
 program
 	.command('changedFile')
+	.description('列出指定时间范围内有改变的文件')
 	.option('--after [after]', '开始时间', utils.afterDay(7))
 	.option('--before [before]', '结束时间')
 	.action((options) => {

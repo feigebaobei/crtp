@@ -6,21 +6,23 @@
 ### feature
 - 初始化项目
 - 初始化文件
-    + 添加自定义模板文件
-    + 列出自定义模板文件
-    + 查询自定义模板文件
-    + 删除自定义模板文件
+    + 添加自定义模板文件（或目录）
+    + 列出自定义模板文件（或目录）
+    + 查询自定义模板文件（或目录）
+    + 删除自定义模板文件（或目录）
 
 ## install
 `npm i crtp-cli -g`
 
 ## usage
-```
-// 在指定目录初始化一个指定项目。可在选项中修改packag.json的一部分字段。
+```shell
+# 在当前目录下生成配置文件
+crtp init
+# 在指定目录初始化一个指定项目。可在选项中修改packag.json的一部分字段。
 crtp initProj projName --path ./first --packageName 'pn'
-// 在指定目录创建一个指定的模板文件
+# 在指定目录创建一个指定的模板文件
 crtp ininFile readme.md --file ./first/projName
-// 添加自定义的模板文件
+# 添加自定义的模板文件
 crtp addFile first.json --file ./first/projName/package.json
 ```
 
@@ -28,24 +30,48 @@ crtp addFile first.json --file ./first/projName/package.json
 默认配置文件：`<root>/crtp.config.js`
 
 ## api
-```
-// 创建项目
-crtp initProj <projName> [--path <projPath>]
-// 创建模板文件
-crtp initFile <fileType> [--file file...] [--packageName]
-// 安装模板文件
-crtp addFile <filename> <file>
-// 列出已经安装的模板文件
-crtp listFile
-// 列出已经安装的模板文件
-crtp lsFile
-// 检查是否安装指定模板文件
-crtp isExistFile <filename>
-// 删除指定的已安装模板文件
-crtp delFile <filename>
-```
+`<>`为必填项  
+`[]`为选填项  
 
-## basc file
+|command|options|说明||||
+|-|-|-|-|-|-|
+||-v, --Version|列出当前版本||||
+|init||生成配置文件||||
+|initFile||以指定模板文件为模板创建文件。||||
+||`<fileType>`|模板文件名||||
+||--file|目标文件路径||||
+||--packageName|用于替换'packageName'|||在v0.0.4时不再支持此选项|
+|addFile||把指定文件设置为模板文件||||
+||`<filename>`|模板文件名||||
+||--file|要成为模板文件的路径||||
+|initDir||按指定模板目录生成目录||||
+||`<dirName>`|模板目录名||||
+||--dir|目标目录名||||
+|addDir||把指定目录设置为模板目录||||
+||`<dirName>`|模板目录名||||
+||--dir|要成为模板目录的路径||||
+|listFile||列出所有模板文件|||在v0.0.4时不再支持此命令|
+|lsFile||列出所有模板文件|||在v0.0.4时不再支持此命令|
+|list / ls||列出所有模板文件||||
+|isExistFile||查询指定模板文件是否存在||||
+||`<filename>`|模板文件名||||
+|delFile||删除指定模板文件||||
+||`<filename>`|模板文件名||||
+|delDir||删除指定模板目录|||待开发|
+|initProj||||||
+||`<projName>`|||||
+||--path||||||
+||--packageName||||||
+||--packageVersion||||||
+||--packageMain||||||
+||--lernaInit||||||
+||--readme||||||
+||--no||||||
+||--gitignore||||||
+||--no||||||
+
+
+## 模板文件（或目录）
 用于初始化文件。
 已内置的模板文件：
 - readme.md
@@ -84,4 +110,5 @@ crtp delFile <filename>
 > 生成change log
 > 优先级 cli > crtp.config.js > 默认配置
 > 支持 cli / js
+> 接入测试
 
