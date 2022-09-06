@@ -359,7 +359,7 @@ program
 	// 在0.0.4版本不支持此选项。
 	.option('--packageName [packageName]', 'please input packageName') // 设置替换项可优化
 	.action((fileType, options) => {
-		tip('在0.0.4版本不再支持 packageName 选项。')
+		tip('yellow', '在0.0.4版本不再支持 packageName 选项。')
 		initFile(fileType, options)
 	})
 

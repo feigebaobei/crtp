@@ -1,7 +1,8 @@
 # `crtp-cli`
 
 ## overview
-> 管理模板文件/目录的工具。
+> 管理模板文件/目录的工具。  
+> 目标：根据模板快速创建文件。  
 
 ### feature
 - 初始化项目
@@ -19,7 +20,7 @@
 # 在当前目录下生成配置文件
 crtp init
 # 在指定目录初始化一个指定项目。可在选项中修改packag.json的一部分字段。
-crtp initProj projName --path ./first --packageName 'pn'
+# crtp initProj projName --path ./first --packageName 'pn'
 # 在指定目录创建一个指定的模板文件
 crtp ininFile readme.md --file ./first/projName
 # 添加自定义的模板文件

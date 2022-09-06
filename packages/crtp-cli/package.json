@@ -2,6 +2,12 @@
   "name": "crtp-cli",
   "version": "0.0.4",
   "description": "> TODO: description",
+  "keywords": [
+    "init",
+    "template",
+    "templateFile",
+    "templateDir"
+  ],
   "author": "stone <feigebaobei@gmail.com>",
   "homepage": "",
   "license": "ISC",
@@ -21,6 +27,10 @@
   ],
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/feigebaobei/crtp.git"
   },
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1"
