@@ -6,8 +6,8 @@ export default [
     output: {
       dir: 'dist',
       // entryFileNames: [name].js,
-      assetFileNames: [name]-[hash][extend],
-      chunkFileNames: [name]-[hash].js,
+      assetFileNames: '[name]-[hash][extend]',
+      chunkFileNames: '[name]-[hash].js',
       format: 'esm',
       compact: false
     },
