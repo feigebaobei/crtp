@@ -1,4 +1,4 @@
-# `{{packageName}}`
+# {{packageName}}
 
 ## overview
 > TODO: description

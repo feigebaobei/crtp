@@ -19,10 +19,8 @@
 ```shell
 # 在当前目录下生成配置文件
 crtp init
-# 在指定目录初始化一个指定项目。可在选项中修改packag.json的一部分字段。
-# crtp initProj projName --path ./first --packageName 'pn'
 # 在指定目录创建一个指定的模板文件
-crtp ininFile readme.md --file ./first/projName
+crtp ininFile readme.md --file ./first/readme.md
 # 添加自定义的模板文件
 crtp addFile first.json --file ./first/projName/package.json
 ```
@@ -34,14 +32,15 @@ crtp addFile first.json --file ./first/projName/package.json
 `<>`为必填项  
 `[]`为选填项  
 
-|command|options|说明||||
+|command|options|说明|demo||version|
 |-|-|-|-|-|-|
 ||-v, --Version|列出当前版本||||
 |init||生成配置文件||||
 |initFile||以指定模板文件为模板创建文件。||||
 ||`<fileType>`|模板文件名||||
 ||--file|目标文件路径||||
-||--packageName|用于替换'packageName'|||在v0.0.4时不再支持此选项|
+||--packageName|用于替换'packageName'|||<delete>0.0.4</delete>|
+||--macroSubstitution|用于宏替换。用空格分开源与目标，多对替换之间用空格分割。若源与目标不成对，则忽略。|crtp initFile a.md --macroSubstitution a b c d e --   表示：把a替换为b，把c替换为d，忽略e。||v0.0.6|
 |addFile||把指定文件设置为模板文件||||
 ||`<filename>`|模板文件名||||
 ||--file|要成为模板文件的路径||||
@@ -95,20 +94,14 @@ crtp addFile first.json --file ./first/projName/package.json
 ```
 
 ## todo
-> 未来迭代计划。
-> 创建配置文件。crtp-cli中的配置从配置文件中得到后与用户设置的配置合并后再使用。
+> crtp-cli中的配置从配置文件中得到后与用户设置的配置合并后再使用。
 > 使用loadFile引入文件（包括配置文件）。它是generator方法。
-> 解决配置文件太多的问题
-> 控制安装配置文件是否独立配置文件
 > 配置文件
     > 在配置文件中为指定的模板文件设置插件列表。
     > 为指定的基本设置插件。pluginFn(content) -> contentOther
 > 可开发插件。
 > 本项目中基于各开发类框架开发。为它们提供配置文件。或在一个目录中统一管理配置文件，或……
-> 当前无法对initFile做插件扩展。
 > 开发模块的顺序
-> 生成文档
-> 生成change log
 > 优先级 cli > crtp.config.js > 默认配置
 > 支持 cli / js
 > 接入测试

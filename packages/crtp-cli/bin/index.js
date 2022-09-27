@@ -80,7 +80,9 @@ let createDir = (sourcePath, targetPath) => {
 	})
 }
 
+// 考虑使用流处理
 let initFile = (fileType, userOption) => {
+	// console.log(userOption)
 	let {pReadFile, pWriteFile} = pUtil
 	let fileList = userOption.file || [`./${fileType}`]
 	let maxLen = fileList.reduce((r, c) => {
@@ -89,8 +91,23 @@ let initFile = (fileType, userOption) => {
 	pReadFile(path.resolve(__dirname, `../assets/${fileType}`), 'utf-8').then((textContent) => {
 		return fileList.map(item => {
 			return mkdirp(path.resolve(process.cwd(), path.dirname(item))).then(() => {
-				if (userOption.packageName) {
-					textContent = textContent.replace(/\{\{packageName}}/g, userOption.packageName)
+				// 2022.11.01 后删除
+				// if (userOption.packageName) {
+				// 	textContent = textContent.replace(/\{\{packageName}}/g, userOption.packageName)
+				// }
+				if (userOption.macroSubstitution) {
+					let arr = []
+					for (let i = 0; i < userOption.macroSubstitution.length; i += 2) {
+						if (userOption.macroSubstitution[i] && userOption.macroSubstitution[i + 1]) {
+							arr.push([userOption.macroSubstitution[i], userOption.macroSubstitution[i + 1]])
+						}
+					}
+					arr = arr.filter(item => item.length === 2)
+					textContent = arr.reduce((r, [origin, target]) => {
+						let reg = new RegExp(origin, 'g')
+						r = r.replace(reg, target)
+						return r
+					}, textContent)
 				}
 				return pWriteFile(path.resolve(process.cwd(), item), textContent, 'utf-8').then(() => {
 					log(chalk.blue(`创建${utils.fillEmpty(item, maxLen)} - 完成`))
@@ -356,10 +373,14 @@ program
 	// .option('--debug', 'output extra debugging')
 	.description('以指定模板文件为模板创建文件。')
 	.option('--file [file...]', 'name and path of file')
+	// 2022.11.01 后删除
 	// 在0.0.4版本不支持此选项。
-	.option('--packageName [packageName]', 'please input packageName') // 设置替换项可优化
+	// .option('--packageName [packageName]', 'please input packageName') // 设置替换项可优化
+	// Macro substitution
+	.option('--macroSubstitution [macroSubstitution...]', 'please input origin target') // 设置替换项可优化
 	.action((fileType, options) => {
-		tip('yellow', '在0.0.4版本不再支持 packageName 选项。')
+		// 2022.11.01 后删除
+		// tip('yellow', '在0.0.4版本不再支持 packageName 选项。')
 		initFile(fileType, options)
 	})
 
