@@ -91,10 +91,6 @@ let initFile = (fileType, userOption) => {
 	pReadFile(path.resolve(__dirname, `../assets/${fileType}`), 'utf-8').then((textContent) => {
 		return fileList.map(item => {
 			return mkdirp(path.resolve(process.cwd(), path.dirname(item))).then(() => {
-				// 2022.11.01 后删除
-				// if (userOption.packageName) {
-				// 	textContent = textContent.replace(/\{\{packageName}}/g, userOption.packageName)
-				// }
 				if (userOption.macroSubstitution) {
 					let arr = []
 					for (let i = 0; i < userOption.macroSubstitution.length; i += 2) {
@@ -147,11 +143,7 @@ let addFile = (filename, userOption) => {
 	})
 }
 let addDir = (dirName, userOption) => {
-	// log(dirName, userOption)
-	// let dirPath = path.resolve(process.cwd(), userOption.dir)
-	// log(dirPath)
 	// 检查模析文件是否存在
-	// log('t', t)
 	fsPromises.stat(path.resolve(__dirname, '../', config.asserts, `./${dirName}`)).then(stats => {
 		log(chalk.red('该模板已经存在'))
 		// 询问用户是否覆盖
@@ -166,20 +158,6 @@ let addDir = (dirName, userOption) => {
 	})
 }
 
-// 考虑要删除
-// 统一使用 ls list
-// 在0.0.4版本删除此api
-let listFiles = () => {
-	let {pReaddir} = pUtil
-	pReaddir(path.resolve(__dirname, '../assets')).then(files => {
-		// 需要兼容 dir
-		files.forEach(item => {
-			log(chalk.blue(item))
-		})
-	}).catch(() => {
-		log(chalk.red(`查询模板文件 - 失败`))
-	})
-}
 let list = () => {
 	fsPromises.readdir(path.resolve(__dirname, '../assets')).then(async function (elementList) {
 		elementList.forEach(async function(ele) {
@@ -295,7 +273,7 @@ let	initProj = (projName, userOption) => {
 		if (userOption.gitignore) {
 			return new Promise((s, j) => {
 				childProcess.exec('crtp initFile .gitignore', {
-						cwd: projPath
+					cwd: projPath
 				}, err => {
 					err ? j(err) : s()
 				})
@@ -335,22 +313,28 @@ let changedFile = (userOption) => {
 	})
 }
 
+let configValidate = (userOption) => {
+	log('待开发')
+}
 
-// 2022.10.01 后删除
-// crtp init <fileType> [--file ...]
-// 在0.0.2版本删除此api
-// program
-// 	.command('init <fileType>')
-// 	// .option('-d, --debug', 'output extra debugging')
-// 	// .option('--debug', 'output extra debugging')
-// 	.option('--file [file...]', 'name and path of file')
-// 	.option('--packageName [packageName]', 'please input packageName') // 设置替换项可优化
-// 	.action((fileType, options) => {
-// 		tip('yellow', 'init 已经更新为 initFile。请使用initFile完成初始化文件工作。init会在0.0.2版本删除。')
-// 		initFile(fileType, options)
-// 	})
+let hpcl = (projPath, userOption) => {
+	log('hpcl', projPath, userOption)
+	// 其实不需要userOption
+	// pReadFile(
+	// path.resolve(process.cwd(), userOption.file).then((textContent) => {})
+	// log('install dependencies')
+// 	npm i -D -E prettier
+// npm i -D lint-staged
+// npm install -D @commitlint/config-conventional @commitlint/cli
+// // npm i husky -D
 
-// crtp initFile <fileType> [--file ...]
+	// 先做成在当前目录创建吧。
+	childProcess.exec('npm i -D lint-staged @commitlint/config-conventional @commitlint/cli husky', {
+		// cwd: projPath
+	}, err => {
+		err ? j(err) : s()
+	})
+}
 
 // crtp init
 // 初始化配置文件
@@ -365,6 +349,7 @@ program
 		log(chalk.blue('初始化完成'))
 	})
 
+// crtp initFile <fileType> [--file ...]
 // 以指定模板文件为模板创建文件。
 // 测试通过
 program
@@ -373,14 +358,9 @@ program
 	// .option('--debug', 'output extra debugging')
 	.description('以指定模板文件为模板创建文件。')
 	.option('--file [file...]', 'name and path of file')
-	// 2022.11.01 后删除
-	// 在0.0.4版本不支持此选项。
-	// .option('--packageName [packageName]', 'please input packageName') // 设置替换项可优化
 	// Macro substitution
-	.option('--macroSubstitution [macroSubstitution...]', 'please input origin target') // 设置替换项可优化
+	.option('-st, --macroSubstitution [macroSubstitution...]', 'please input origin target') // 设置替换项可优化
 	.action((fileType, options) => {
-		// 2022.11.01 后删除
-		// tip('yellow', '在0.0.4版本不再支持 packageName 选项。')
 		initFile(fileType, options)
 	})
 
@@ -413,27 +393,6 @@ program
 	.option('--dir <dir>', 'path to local dir (绝对路径)')
 	.action((dirName, options) => {
 		addDir(dirName, options)
-	})
-
-// crtp listFile
-// 列出所有模板文件
-// 测试通过
-program
-	.command('listFile')
-	.action(() => {
-		tip('yellow', 'listFile 已经更新为 list。请使用list列出模板文件或目录。listFile会在0.0.4版本删除。')
-		listFiles()
-	})
-
-// crtp lsFile
-// 列出所有模板文件
-// 测试通过
-// 与crtp list功能相同。是list的别名。
-program
-	.command('lsFile')
-	.action(() => {
-		tip('yellow', 'lsFile 已经更新为 list。请使用list列出模板文件或目录。lsFile会在0.0.4版本删除。')
-		listFiles()
 	})
 
 // crtp list
@@ -483,6 +442,7 @@ program
 	})
 
 // crtp initProj <projName> --path ./
+// 待完善
 program
 	.command('initProj <projName>')
 	.option('--path [path]', 'input path of project')
@@ -512,6 +472,32 @@ program
 	.action((options) => {
 		changedFile(options)
 	})
+
+// 验证配置文件是否正确
+// crtp configValidate --config
+// 待测试`
+program
+	.command('configValidate')
+	.description('验证配置文件是否正确')
+	.option('--config [configFilePath]', '指定配置文件的路径')
+	.action((options) => {
+		configValidate(options)
+	})
+
+// husky 与 prettier/commitlint/lint-staged结合使用
+// crtp hpcl
+// 待测试
+program
+	.command('hpcl')
+	.description('创建husky/prettier/commitlint/lint-staged基本功能')
+	// .option('--config [configFilePath]', '指定配置文件的路径')
+	.option('--projPath [projPath]', '项目的目录')
+	// let projPath = path.resolve(process.cwd(), userOption.path || '', projName)
+	.action((projPath, options) => {
+		hpcl(projPath, options)
+	})
+
+
 
 program.parse(process.argv)
 

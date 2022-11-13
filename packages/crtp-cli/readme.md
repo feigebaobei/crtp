@@ -32,43 +32,40 @@ crtp addFile first.json --file ./first/projName/package.json
 `<>`为必填项  
 `[]`为选填项  
 
-|command|options|说明|demo||version|
-|-|-|-|-|-|-|
-||-v, --Version|列出当前版本||||
-|init||生成配置文件||||
-|initFile||以指定模板文件为模板创建文件。||||
-||`<fileType>`|模板文件名||||
-||--file|目标文件路径||||
-||--packageName|用于替换'packageName'|||<delete>0.0.4</delete>|
-||--macroSubstitution|用于宏替换。用空格分开源与目标，多对替换之间用空格分割。若源与目标不成对，则忽略。|crtp initFile a.md --macroSubstitution a b c d e --   表示：把a替换为b，把c替换为d，忽略e。||v0.0.6|
-|addFile||把指定文件设置为模板文件||||
-||`<filename>`|模板文件名||||
-||--file|要成为模板文件的路径||||
-|initDir||按指定模板目录生成目录||||
-||`<dirName>`|模板目录名||||
-||--dir|目标目录名||||
-|addDir||把指定目录设置为模板目录||||
-||`<dirName>`|模板目录名||||
-||--dir|要成为模板目录的路径||||
-|listFile||列出所有模板文件|||在v0.0.4时不再支持此命令|
-|lsFile||列出所有模板文件|||在v0.0.4时不再支持此命令|
-|list / ls||列出所有模板文件||||
-|isExistFile||查询指定模板文件是否存在||||
-||`<filename>`|模板文件名||||
-|delFile||删除指定模板文件||||
-||`<filename>`|模板文件名||||
-|delDir||删除指定模板目录|||待开发|
-|initProj||||||
-||`<projName>`|||||
-||--path||||||
-||--packageName||||||
-||--packageVersion||||||
-||--packageMain||||||
-||--lernaInit||||||
-||--readme||||||
-||--no||||||
-||--gitignore||||||
-||--no||||||
+|command|options|value|说明|demo||version|
+|-|-|-|-|-|-|-|
+||-v, --Version||列出当前版本||||
+|init|||生成配置文件||||
+|initFile |||以指定模板文件为模板创建文件。||||
+||`<fileType>`||模板文件名||||
+||--file [file...]||目标文件路径||||
+||-st, --[macroSubstitution] [macroSubstitution...]||用于宏替换。用空格分开源与目标，多对替换之间用空格分割。若源与目标不成对，则忽略。|crtp initFile a.md --macroSubstitution a b c d e --   表示：把a替换为b，把c替换为d，忽略e。||v0.0.6|
+|addFile|||把指定文件设置为模板文件||||
+||`<filename>`||模板文件名||||
+||`--[file] <file>`||要成为模板文件的路径||||
+|initDir|||按指定模板目录生成目录||||
+||`<dirName>`||模板目录名||||
+||`--dir [dir...]`||目标目录名||||
+|addDir|||把指定目录设置为模板目录||||
+||`<dirName>`||模板目录名||||
+||`--dir <dir>`||要成为模板目录的路径||||
+|list / ls|||列出所有模板文件||||
+|isExistFile|||查询指定模板文件是否存在||||
+||`<filename>`||模板文件名||||
+|delFile|||删除指定模板文件||||
+||`<filename>`||模板文件名||||
+|delDir|||删除指定模板目录|||待开发|
+|initProj||||||待完善|
+||`<projName>`||||||
+||--path|||||||
+||--packageName|||||||
+||--packageVersion|||||||
+||--packageMain|||||||
+||--lernaInit|||||||
+||--readme|||||||
+||--no|||||||
+||--gitignore|||||||
+||--no|||||||
 
 
 ## 模板文件（或目录）
@@ -104,5 +101,6 @@ crtp addFile first.json --file ./first/projName/package.json
 > 开发模块的顺序
 > 优先级 cli > crtp.config.js > 默认配置
 > 支持 cli / js
-> 接入测试
+> 接入测试  
+> 验证配置文件是否正确  
 

@@ -13,7 +13,7 @@
 
 ## usage
 同`./demo.md`
-```
+```shell
 const {{packageName}} = require('{{packageName}}');
 // or
 // import {{packageName}} from '{{packageName}}';
@@ -27,6 +27,7 @@ const {{packageName}} = require('{{packageName}}');
 ||||||||
 ||||||||
 ||||||||
+
 ## api
 `{{packageName}}.fn(param, first: string, second: boolean = true) => void`
 description
