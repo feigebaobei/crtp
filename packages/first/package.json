@@ -27,5 +27,8 @@
     "url": "https://github.com/feigebaobei/crtp/issues"
   },
   "homepage": "https://github.com/feigebaobei/crtp#readme",
-  "gitHead": "12f882a08bfff6ae8bef1b3ccf1430d0aae42257"
+  "gitHead": "12f882a08bfff6ae8bef1b3ccf1430d0aae42257",
+  "dependencies": {
+    "axios": "^1.1.3"
+  }
 }

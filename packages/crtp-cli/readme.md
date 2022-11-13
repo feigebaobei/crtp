@@ -67,7 +67,6 @@ crtp addFile first.json --file ./first/projName/package.json
 ||--gitignore|||||||
 ||--no|||||||
 
-
 ## 模板文件（或目录）
 用于初始化文件。
 已内置的模板文件：
@@ -93,14 +92,15 @@ crtp addFile first.json --file ./first/projName/package.json
 ## todo
 > crtp-cli中的配置从配置文件中得到后与用户设置的配置合并后再使用。
 > 使用loadFile引入文件（包括配置文件）。它是generator方法。
-> 配置文件
-    > 在配置文件中为指定的模板文件设置插件列表。
-    > 为指定的基本设置插件。pluginFn(content) -> contentOther
+> 配置文件  
+    > 在配置文件中为指定的模板文件设置插件列表。  
+    > 为指定的基本设置插件。pluginFn(content) -> contentOther  
+    > 使用配置文件中指定的包管理工具  
 > 可开发插件。
+> 接入测试工具  
 > 本项目中基于各开发类框架开发。为它们提供配置文件。或在一个目录中统一管理配置文件，或……
 > 开发模块的顺序
 > 优先级 cli > crtp.config.js > 默认配置
 > 支持 cli / js
-> 接入测试  
 > 验证配置文件是否正确  
 

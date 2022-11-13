@@ -313,27 +313,17 @@ let changedFile = (userOption) => {
 	})
 }
 
-let configValidate = (userOption) => {
-	log('待开发')
-}
-
-let hpcl = (projPath, userOption) => {
-	log('hpcl', projPath, userOption)
-	// 其实不需要userOption
-	// pReadFile(
-	// path.resolve(process.cwd(), userOption.file).then((textContent) => {})
-	// log('install dependencies')
-// 	npm i -D -E prettier
-// npm i -D lint-staged
-// npm install -D @commitlint/config-conventional @commitlint/cli
-// // npm i husky -D
-
-	// 先做成在当前目录创建吧。
-	childProcess.exec('npm i -D lint-staged @commitlint/config-conventional @commitlint/cli husky', {
-		// cwd: projPath
-	}, err => {
-		err ? j(err) : s()
-	})
+let configValidate = async (userOption) => {
+	let configPath = path.resolve(process.cwd(), userOption.config)
+	let cont = await fsPromises.readFile(configPath, 'utf-8')
+	cont = JSON.parse(cont)
+	if (typeof cont.assets !== 'string') {
+		log(chalk.red(`配置项 assets - 错误`))
+	} else if (!['npm', 'yarn', 'pnpm'].includes(cont.npmClient)) {
+		log(chalk.red(`配置项 npmClient - 错误`))
+	} else {
+		log(chalk.blue(`配置文件 ${userOption.config} - 正确`))
+	}
 }
 
 // crtp init
@@ -475,26 +465,14 @@ program
 
 // 验证配置文件是否正确
 // crtp configValidate --config
-// 待测试`
+// 测试通过
 program
 	.command('configValidate')
 	.description('验证配置文件是否正确')
-	.option('--config [configFilePath]', '指定配置文件的路径')
+	// 设置了默认值
+	.option('--config [configFilePath]', '指定配置文件的路径', './crtp.config.json')
 	.action((options) => {
 		configValidate(options)
-	})
-
-// husky 与 prettier/commitlint/lint-staged结合使用
-// crtp hpcl
-// 待测试
-program
-	.command('hpcl')
-	.description('创建husky/prettier/commitlint/lint-staged基本功能')
-	// .option('--config [configFilePath]', '指定配置文件的路径')
-	.option('--projPath [projPath]', '项目的目录')
-	// let projPath = path.resolve(process.cwd(), userOption.path || '', projName)
-	.action((projPath, options) => {
-		hpcl(projPath, options)
 	})
 
 
