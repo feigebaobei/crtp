@@ -13,7 +13,7 @@
 
 ## usage
 同`./demo.md`
-```shell
+```js
 const {{packageName}} = require('{{packageName}}');
 // or
 // import {{packageName}} from '{{packageName}}';
@@ -22,13 +22,24 @@ const {{packageName}} = require('{{packageName}}');
 
 ## configuration
 默认配置文件：`path/to/file.json`。
-|key|description|default|enum|demo|||
-|-|-|-|-|-|-|-|
-||||||||
-||||||||
-||||||||
+
+<!-- prettier-ignore-start -->
+|key|description|type|default|enum|demo|||
+|-|-|-|-|-|-|-|-|
+|||||||||
+|||||||||
+|||||||||
+<!-- prettier-ignore-end -->
 
 ## api
+<!-- prettier-ignore-start -->
+|key|description|type|default|enum|demo|||
+|-|-|-|-|-|-|-|-|
+|||||||||
+|||||||||
+|||||||||
+<!-- prettier-ignore-end -->
+
 `{{packageName}}.fn(param, first: string, second: boolean = true) => void`
 description
 

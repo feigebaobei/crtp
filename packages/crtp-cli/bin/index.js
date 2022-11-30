@@ -289,6 +289,39 @@ let	initProj = (projName, userOption) => {
 	})
 }
 
+// for temp
+let ipFn = (userOptions) => {
+	// cwd
+	let cmd = ''
+	if (userOptions.npmrc) {
+		cmd += 'crtp initFile .npmrc && '
+	}
+	if (userOptions.prettier) {
+		cmd += 'crtp initFile .prettierignore && '
+		cmd += 'crtp initFile .prettierrc.json && '
+		cmd += 'npm i -E -D prettier && '
+	}
+	if (userOptions.readme) {
+		cmd += 'crtp initFile readme.md && '
+	}
+	console.log('cmd', cmd)
+	// if (userOptions.npmrc) {
+	// 	cmd = 'crtp initFile .npmrc && '
+	// }
+	// if (userOptions.npmrc) {
+	// 	cmd = 'crtp initFile .npmrc && '
+	// }
+	cmd = cmd.slice(0, -4)
+	new Promise((s, j) => {
+		childProcess.exec(cmd, {
+			// cwd: process.cwd()
+		}, (err, data) => {
+			err ? j(err) : s(data)
+		})
+
+	})
+}
+
 let changedFile = (userOption) => {
 	let cmd = 'git log --name-only'
 	if (userOption.after) {
@@ -450,6 +483,20 @@ program
 	.option('--no-gitignore [gitignore]',          '是否生成初始化.gitignore')
 	.action((projName, options) => {
 		initProj(projName, options)
+	})
+
+// 暂定为ip
+// crtp ip
+// 还有好多工程化的初始化文件
+program
+	// .command('ip <projName>')
+	.command('ip')
+	// .option('--path [path]', '项目所在的目录')
+	.option('--npmrc [npmrc]', 'npmrc', true)
+	.option('--prettier [prettier]', 'prettier', true)
+	.option('--readme [readme]', 'readme', true)
+	.action((options) => {
+		ipFn(options)
 	})
 
 // 列出指定时间范围内有改变的文件
