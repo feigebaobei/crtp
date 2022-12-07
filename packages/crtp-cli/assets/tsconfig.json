@@ -1,0 +1,18 @@
+{
+  "extends": "./node_modules/gts/tsconfig-google.json",
+  "type": "modules",
+  "compilerOptions": {
+    "target": "es2020",
+    "rootDir": ".",
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "outDir": "tscDist", // tsc的输出目录。同时也是rollup的入口
+    "lib": [
+      "es2020",
+    ]
+  },
+  "include": [
+    "src/**/*.ts",
+    "test/**/*.ts"
+  ]
+}
