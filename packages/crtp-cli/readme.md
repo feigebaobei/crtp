@@ -40,6 +40,7 @@ crtp addFile first.json --file ./first/projName/package.json
 ||`<fileType>`||模板文件名||||
 ||--file [file...]||目标文件路径||||
 ||-st, --[macroSubstitution] [macroSubstitution...]||用于宏替换。用空格分开源与目标，多对替换之间用空格分割。若源与目标不成对，则忽略。|crtp initFile a.md --macroSubstitution a b c d e --   表示：把a替换为b，把c替换为d，忽略e。||v0.0.6|
+||--registry [registry]|npm(default), yarn, tencent, cnpm, taobao, npmMirror, guazi|.npmrc的注册器|`crtp initFile .npmrc --registry cnpm`||0.0.9|
 |addFile|||把指定文件设置为模板文件||||
 ||`<filename>`||模板文件名||||
 ||`--[file] <file>`||要成为模板文件的路径||||
@@ -66,6 +67,10 @@ crtp addFile first.json --file ./first/projName/package.json
 ||--no|||||||
 ||--gitignore|||||||
 ||--no|||||||
+|ip|||在当前目录中执行若干工程化命令|||||
+||--npmrc|boolean 默认为true|是否生成 .npmrc 文件|||||
+||--prettier|boolean 默认为true|是否生成.prettierignore .prettierrc.json|||||
+||--readme|boolean 默认为true|是否生成 readme.md|||||
 
 ## 模板文件（或目录）
 用于初始化文件。

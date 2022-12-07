@@ -91,6 +91,7 @@ let initFile = (fileType, userOption) => {
 	pReadFile(path.resolve(__dirname, `../assets/${fileType}`), 'utf-8').then((textContent) => {
 		return fileList.map(item => {
 			return mkdirp(path.resolve(process.cwd(), path.dirname(item))).then(() => {
+				// 替换
 				if (userOption.macroSubstitution) {
 					let arr = []
 					for (let i = 0; i < userOption.macroSubstitution.length; i += 2) {
@@ -105,6 +106,13 @@ let initFile = (fileType, userOption) => {
 						return r
 					}, textContent)
 				}
+				// 使用选项
+				switch (fileType) {
+					case '.npmrc':
+						textContent = `registry = ${utils.npmRegistry[userOption.registry]}` // https://registry.npmjs.org
+						break
+				}
+				// 写入
 				return pWriteFile(path.resolve(process.cwd(), item), textContent, 'utf-8').then(() => {
 					log(chalk.blue(`创建${utils.fillEmpty(item, maxLen)} - 完成`))
 				})
@@ -304,7 +312,8 @@ let ipFn = (userOptions) => {
 	if (userOptions.readme) {
 		cmd += 'crtp initFile readme.md && '
 	}
-	console.log('cmd', cmd)
+	cmd = cmd.slice(0, -4)
+	console.log('cmd:', cmd)
 	// if (userOptions.npmrc) {
 	// 	cmd = 'crtp initFile .npmrc && '
 	// }
@@ -383,6 +392,9 @@ program
 	.option('--file [file...]', 'name and path of file')
 	// Macro substitution
 	.option('-st, --macroSubstitution [macroSubstitution...]', 'please input origin target') // 设置替换项可优化
+	// 为所有模板文件开辟选项
+	// .option('--config [configFilePath]', '指定配置文件的路径', './crtp.config.json')
+	.option('--registry [registry]', '指定注册器。可选项: npm(default), yarn, tencent, cnpm, taobao, npmMirror, guazi', 'npm')
 	.action((fileType, options) => {
 		initFile(fileType, options)
 	})

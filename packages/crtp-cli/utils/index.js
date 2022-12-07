@@ -45,9 +45,20 @@ let afterDay = (day) => {
     let [y, m, d] = [date.getFullYear(), date.getMonth(), date.getDate()]
     return `${y}-${m + 1}-${d}`
 }
+let npmRegistry = {
+    npm: 'https://registry.npmjs.org/',
+    yarn: 'https://registry.yarnpkg.com/',
+    tencent: 'https://mirrors.cloud.tencent.com/npm/',
+    cnpm: 'https://r.cnpmjs.org/',
+    taobao: 'https://registry.npmmirror.com/',
+    npmMirror: 'https://skimdb.npmjs.com/registry/',
+    guazi: 'http://npm.guazi-corp.com/',
+  
+}
 module.exports = {
 	tranvers,
     fillEmpty,
-    afterDay
+    afterDay,
+    npmRegistry
 }
 // export 
