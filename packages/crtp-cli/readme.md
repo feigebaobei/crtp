@@ -18,9 +18,9 @@
 ## usage
 ```shell
 # 在当前目录下生成配置文件
-crtp init
+# crtp init
 # 在指定目录创建一个指定的模板文件
-crtp ininFile readme.md --file ./first/readme.md
+crtp initFile readme.md --file ./first/readme.md
 # 添加自定义的模板文件
 crtp addFile first.json --file ./first/projName/package.json
 ```

@@ -4,3 +4,9 @@ coverage
 
 # Ignore all HTML files:
 *.html
+
+dist
+dist-ssr
+dist_cjs
+dist_esm
+tscDist

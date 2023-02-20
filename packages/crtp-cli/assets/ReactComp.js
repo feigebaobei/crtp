@@ -18,6 +18,7 @@ export default function ReactComp () {
         }
         return res
     }, {})
+    // let [a, setA] = useState(null)
     useEffect(() => {}, [])
     return <Fragment>
         <div>
